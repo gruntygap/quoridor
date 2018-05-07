@@ -3,7 +3,25 @@ A version of Quoridor built with Java.
 An eclipse project.
 UI-Base: JavaFX
 
-## Classes
+## Model
+### Main Objects of the Model
+* <b>Game (Model)</b>
+  * The encapsulating object that contains all algorithms and constructs of Quoridor
+* <b>Board</b>
+  * The board that holds n x n spaces. (n must be odd and n >= 5)
+* <b>Space</b>
+  * The tile that holds the player, and is surrounded by fences
+  * Has top, left, right, bottom Fence attributes.
+  * Contains a player
+  * <b>Player (1/2)</b>
+    * A pawn controlled by a player.
+    * A player can move from space to space
+  * <b>Fence</b>
+    * A barrier that the player cannot hop over
+    * Can be <i>valid</i> (usable by the player) (inner Fences) or <i>invalid</i> (Not used by the player; default state of border).
+    * Can be <i>placed</i> (Automatically the outside ring of fences) or <i>not placed</i> (the inner fences until changed by a Player).
+
+### Classes:
 ### Model
 ##### Methods
 * getFeedBack()
@@ -12,7 +30,7 @@ UI-Base: JavaFX
   * Sets the size of the board.
 * getSize()
   * gets the size of the board (if needed).
-* clear() or reset()
+* reset()
   * clears/resets the game board to original board.
 * isGameWon()
   * Determines if a player has won the game
@@ -26,7 +44,31 @@ UI-Base: JavaFX
     * TBD
 * makeMove(...)
     * TBD
+  * reset()
+    * Resets the game board
 
+### Board
+##### Variables
+* ArrayList<ArrayList< Space > board;
+
+##### Methods
+* Constructor();
+* getSpace(int x, int y);
+
+### Space
+##### Methods
+* Constructor();
+* setSpace();
+
+### Player
+##### Methods
+
+### Fence
+##### Methods
+* exclude(...)
+* isValid(...)
+
+# <<<<< in progress
 ##### Variables/Components
 * DataType board
   * Stores game data.
@@ -74,7 +116,9 @@ UI-Base: JavaFX
 * boolean gameOver
   * keeps track if the game has won. True for game over, false otherwise.
 
-### View
+# >>>>>>>>>
+
+## View
 ##### Methods
 
 * update(...)
@@ -82,17 +126,26 @@ UI-Base: JavaFX
 
 
 ##### Variables/Components
-* Button reset/clear
-   * Resets or clears the board by calling model.clear() (or model.reset()).
-* ComboBox<Integer> size or sizeSelect.
+* Model object to communicate with model
+* Button reset
+   * Resets the board by calling model.reset.
+* ComboBox<Integer> sizeSelect.
     * Gives user a ComboBox to select the size of the board.
-* Label playerMove
-    * Displays whose turn it currently is.
+* Label feedback
+    * Displays whose turn it currently is/who won the game.
 * Label sizeLabel
     * says "select a size"
+* int boardSize
+  * takes in size user inputed from sizeSelect
 
 
-### Controller
+## Controller
 ##### Methods
+* Handle method
+    * for ActionEvents
 
 ##### Variables/Components
+* Model object
+    * for communicating with Model
+* View object (unless controller is inside of view)
+    * for communicating with view
