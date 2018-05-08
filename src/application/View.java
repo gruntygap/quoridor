@@ -29,7 +29,10 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		model = new Model(5);
 		model.addObserver( this);
 		
-		feedback = new Label("Quoridor!");
+		Label title = new Label("Quoridor!");
+		
+		//TODO temp filler label to just display what will eventually be there
+		feedback = new Label("Player 1's turn");
 		
 		
 		// Creates a button that resets the board to its original state
@@ -48,10 +51,12 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		
 		GridPane top = new GridPane();
 		
-		top.add(feedback, 0, 0);
+		top.add(title, 0, 0);
 		top.add(new Label("Select a size: "), 0, 1);
+		top.add(sizeSelect, 1, 1);
 		
 		this.setTop(top);
+		this.setBottom(feedback);
 		
 	}
 
