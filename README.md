@@ -3,6 +3,7 @@ A version of Quoridor built with Java.
 An eclipse project.
 UI-Base: JavaFX
 
+
 ## Model
 ### Main Objects of the Model
 * <b>Game (Model)</b>
@@ -48,7 +49,7 @@ UI-Base: JavaFX
       }
     }
   ```
-  
+
 ##### Methods
 * getFeedBack()
   * Displays who won the game.
@@ -107,7 +108,6 @@ UI-Base: JavaFX
 # <<<<< in progress
 ##### Variables/Components
 * DataType board
-
 * DataType space
   * Stores space data.
   * Constructor:
@@ -163,3 +163,4 @@ UI-Base: JavaFX
     * for communicating with Model
 * View object (unless controller is inside of view)
     * for communicating with view
+
