@@ -23,55 +23,9 @@ UI-Base: JavaFX
 
 ### Classes:
 ### Model
-##### Methods
-* getFeedBack()
-  * Displays who won the game.
-* setSize(int size)
-  * Sets the size of the board.
-* getSize()
-  * gets the size of the board (if needed).
-* reset()
-  * clears/resets the game board to original board.
-* isGameWon()
-  * Determines if a player has won the game
-* setChanged()
-  * Given method that says that something has changed
-* notifyObservers(...)
-  * Given method that notifies subscribers to update.
-* changeTurn(...)
-  * Switches the current player's turn.
-* placeWall(...)
-    * TBD
-* makeMove(...)
-    * TBD
-  * reset()
-    * Resets the game board
-
-### Board
 ##### Variables
 * ArrayList<ArrayList< Space > board;
-
-##### Methods
-* Constructor();
-* getSpace(int x, int y);
-
-### Space
-##### Methods
-* Constructor();
-* setSpace();
-
-### Player
-##### Methods
-
-### Fence
-##### Methods
-* exclude(...)
-* isValid(...)
-
-# <<<<< in progress
-##### Variables/Components
-* DataType board
-  * Stores game data.
+* Stores game data.
   * Constructor:
   ```java
   ArrayList<ArrayList<Space>>() board;
@@ -94,6 +48,66 @@ UI-Base: JavaFX
       }
     }
   ```
+  
+##### Methods
+* getFeedBack()
+  * Displays who won the game.
+* setSize(int size)
+  * Sets the size of the board.
+* getSize()
+  * gets the size of the board (if needed).
+* reset()
+  * clears/resets the game board to original board.
+* isGameWon()
+  * Determines if a player has won the game
+* setChanged()
+  * Given method that says that something has changed (needed method by observable)
+* notifyObservers(...)
+  * Given method that notifies subscribers to update. (needed method by observable)
+* changeTurn(...)
+  * Switches the current player's turn.
+* placeWall(...)
+    * TBD
+* makeMove(...)
+    * TBD
+  * reset()
+    * Resets the game board
+
+##### Methods
+* Constructor();
+* getSpace(int x, int y);
+
+### Space
+##### Variables
+* Fence top;
+* Fence left;
+* Fence bottom;
+* Fence right;
+* Player playerSpace;
+
+##### Methods
+* Constructor();
+* setSpace();
+
+### Player
+##### Variables
+* String identifier
+  * Gives the "name" of the player
+
+##### Methods
+
+### Fence
+##### Variables
+* boolean placed;
+* boolean valid;
+##### Methods
+* exclude(...)
+* isValid(...)
+
+# <<<<< in progress
+##### Variables/Components
+* DataType board
+
 * DataType space
   * Stores space data.
   * Constructor:
@@ -122,7 +136,7 @@ UI-Base: JavaFX
 ##### Methods
 
 * update(...)
-  * Method used to update the view that is called by the model
+  * Method used to update the view that is called by the model (needed method by observable)
 
 
 ##### Variables/Components
