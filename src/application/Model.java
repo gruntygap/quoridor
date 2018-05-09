@@ -26,7 +26,7 @@ public class Model extends Observable {
 		// Sets the board size and creates board and players
 		setBoardSize(size);
 		} catch(Exception e) {
-			throw new Exception("Object not created: " + e.getMessage());
+			throw new Exception("Board not created: " + e.getMessage());
 		}
 	}
 	
@@ -106,7 +106,7 @@ public class Model extends Observable {
 		}
 	}
 	
-	private void resetPlayers() {
+	private void createPlayers() {
 		// Initialize/Reset Players
 		this.playerOne = new Player("Player 1");
 		this.playerTwo = new Player("Player 2");
@@ -118,7 +118,7 @@ public class Model extends Observable {
 
 	public void setBoardSize(int size) throws Exception {
 		if(size > 1 && size % 2 != 0) {
-			resetPlayers();
+			createPlayers();
 			this.boardSize = size;
 			createBoard(size);
 			this.turn = 1;
@@ -153,15 +153,81 @@ public class Model extends Observable {
 		}
 	}
 	
-	public void makeMove() {
-		
+	public void makeMove(int x, int y) throws Exception {
+		Player pointer = null;
+		if(this.turn == 1) {
+			pointer = playerOne;
+		} else if(this.turn == 2) {
+			pointer = playerTwo;
+		}
+		if(validPlayerMove(pointer, x, y)) {
+			// get the current space location of the player
+			Space old = this.board.get(pointer.getPosition()[0]).get(pointer.getPosition()[1]);
+			// Set the intended space as the space holding the player
+			this.board.get(x).get(y).setPlayerSpace(pointer);
+			pointer.setPosition(new int[] {x,y});
+			// Set the old playerSpace to holding null
+			old.setPlayerSpace(null);
+		} else {
+			throw new Exception("That is not a valid space to move to");
+		}
+		// Player has now moved, it is the other players turn
+		changeTurn();
 	}
 	
-	public void movePlayer() {
+	private boolean validPlayerMove(Player currentPlayer, int x, int y) {
+		boolean valid = false;
+		// Get location of the currentPlayer
+		int playerX = currentPlayer.getPosition()[0];
+		int playerY = currentPlayer.getPosition()[1];
 		
+		// Get location of otherPlayer
+		int otherPlayerX;
+		int otherPlayerY;
+		if(currentPlayer.equals(playerOne)) {
+			otherPlayerX = playerTwo.getPosition()[0];
+			otherPlayerY = playerTwo.getPosition()[1];
+		} else {
+			otherPlayerX = playerOne.getPosition()[0];
+			otherPlayerY = playerOne.getPosition()[1];
+		}
+		// Create an arrayList of spaces which are valid for current player to move to.
+		ArrayList<Space> validSpaces = new ArrayList<Space>();
+		if(!this.board.get(playerX).get(playerY).getTop().getPlaced())
+			validSpaces.add(this.board.get(playerX - 1).get(playerY));
+		if(!this.board.get(playerX).get(playerY).getBottom().getPlaced())
+			validSpaces.add(this.board.get(playerX + 1).get(playerY));
+		if(!this.board.get(playerX).get(playerY).getLeft().getPlaced())
+			validSpaces.add(this.board.get(playerX).get(playerY - 1));
+		if(!this.board.get(playerX).get(playerY).getRight().getPlaced())
+			validSpaces.add(this.board.get(playerX).get(playerY + 1));
+		
+		if(validSpaces.contains(this.board.get(otherPlayerX).get(otherPlayerY))) {
+			// Cannot move to the other player, as the other player lives there
+			// Remove that space from valid Spaces.
+			validSpaces.remove(this.board.get(otherPlayerX).get(otherPlayerY));
+			// The Spaces that may be valid
+			if(!this.board.get(otherPlayerX).get(otherPlayerY).getTop().getPlaced())
+				validSpaces.add(this.board.get(otherPlayerX - 1).get(otherPlayerY));
+			if(!this.board.get(otherPlayerX).get(otherPlayerY).getBottom().getPlaced())
+				validSpaces.add(this.board.get(otherPlayerX + 1).get(otherPlayerY));
+			if(!this.board.get(otherPlayerX).get(otherPlayerY).getLeft().getPlaced())
+				validSpaces.add(this.board.get(otherPlayerX).get(otherPlayerY - 1));
+			if(!this.board.get(otherPlayerX).get(otherPlayerY).getRight().getPlaced())
+				validSpaces.add(this.board.get(otherPlayerX).get(otherPlayerY + 1));
+			
+			// Remove the space the player is coming from
+			validSpaces.remove(this.board.get(playerX).get(playerY));
+		}
+		// If the validSpaces algorithm finds the space player wants to go to
+		// Then it is true
+		if(validSpaces.contains(this.board.get(x).get(y))) {
+			valid = true;
+		}
+		return valid;
 	}
 	
-	public void placeWall(int x, int y, String key) throws Exception {
+	public void placeFence(int x, int y, String key) throws Exception {
 		// Temporary fence;
 		Fence temp = null;
 		if(key.equals("top")) {
@@ -187,7 +253,9 @@ public class Model extends Observable {
 		if(!(validFencePlacement(playerOne) && validFencePlacement(playerTwo))) {
 			temp.removeFence();
 			throw new Exception("You are not allowed to block a path to a player goal!");
-		}	
+		}
+		// If the player sets a valid fence, then change the turn 
+		changeTurn();
 	}
 	
 	// If a valid move from player
@@ -257,6 +325,17 @@ public class Model extends Observable {
 	}
 	
 	private boolean isGameOver() {
+		Set<Space> playerOneGoal = new HashSet<Space>();
+		Set<Space> playerTwoGoal = new HashSet<Space>();
+		for(int i = 0; i < this.boardSize; i++) {
+			playerOneGoal.add(this.board.get(0).get(i));
+			playerTwoGoal.add(this.board.get(this.boardSize - 1).get(i));
+		}
+		
+		if(playerOneGoal.contains(this.board.get(this.getPlayerOne().getPosition()[0]).get(this.getPlayerOne().getPosition()[1])) ||
+				playerTwoGoal.contains(this.board.get(this.getPlayerTwo().getPosition()[0]).get(this.getPlayerTwo().getPosition()[1]))) {
+			return true;
+		}
 		return false;
 	}
 	
