@@ -64,6 +64,9 @@ UI-Base: JavaFX
   * Given method that says that something has changed (needed method by observable)
 * notifyObservers(...)
   * Given method that notifies subscribers to update. (needed method by observable)
+  * When a player Moves.
+  * When a fence is placed.
+  * setting the board Size.
 * changeTurn(...)
   * Switches the current player's turn.
 * placeWall(...)

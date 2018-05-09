@@ -67,7 +67,7 @@ public class Space {
 	
 	public String toString() {
 		String s = "";
-		s += "Top: " + this.getTop() + " | Bottom: " + this.getBottom() + " | Left: " + this.getLeft() + " | Right: " + this.getRight();
+		s += "Top: " + this.getTop() + " | Bottom: " + this.getBottom() + " | Left: " + this.getLeft() + " | Right: " + this.getRight() + " | PLAYER: " + this.getPlayerSpace();
 		return s;
 	}
 }
