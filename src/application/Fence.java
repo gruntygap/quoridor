@@ -40,4 +40,14 @@ public class Fence {
 	public void removeFence() {
 		this.placed = false;
 	}
+	
+	public String toString() {
+		String s = "";
+		if(this.placed) {
+			s+= "Placed";
+		} else {
+			s+= "null";
+		}
+		return s;
+	}
 }

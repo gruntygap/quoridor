@@ -328,8 +328,8 @@ public class Model extends Observable {
 		Set<Space> playerOneGoal = new HashSet<Space>();
 		Set<Space> playerTwoGoal = new HashSet<Space>();
 		for(int i = 0; i < this.boardSize; i++) {
-			playerOneGoal.add(this.board.get(0).get(i));
-			playerTwoGoal.add(this.board.get(this.boardSize - 1).get(i));
+			playerOneGoal.add(this.board.get(this.boardSize - 1).get(i));
+			playerTwoGoal.add(this.board.get(0).get(i));
 		}
 		
 		if(playerOneGoal.contains(this.board.get(this.getPlayerOne().getPosition()[0]).get(this.getPlayerOne().getPosition()[1])) ||
@@ -355,7 +355,9 @@ public class Model extends Observable {
 			}
 		}
 		s += "PLAYER 1: " + playerOne.getPosition()[0] + " " + playerOne.getPosition()[1] + "\n";
-		s += "PLAYER 2: " + playerTwo.getPosition()[0] + " " + playerTwo.getPosition()[1];
+		s += "PLAYER 2: " + playerTwo.getPosition()[0] + " " + playerTwo.getPosition()[1] + "\n";
+		s += "FEEDBACK: " + this.getFeedBack() + "\n";
+		s += "TURN: " + this.turn;
 		return s;
 	}
 	
