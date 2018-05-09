@@ -39,10 +39,12 @@ public class Model extends Observable {
 					if(i == 0) {
 						System.out.println("LOL GOTTEM");
 						this.board.get(i).add(j, new Space(playerOne));
+						playerOne.setPosition(new int[]{i, j});
 					}
 					// If we are in the bottom row, add player two in the space
 					else if(i == (size-1)) {
 						this.board.get(i).add(j, new Space(playerTwo));
+						playerTwo.setPosition(new int[]{i, j});
 					}
 					// Add generic space if none of those things
 					else {
@@ -147,6 +149,23 @@ public class Model extends Observable {
 			return "";
 		}
 	}
+	
+	public void makeMove() {
+		
+	}
+	
+	public void movePlayer() {
+		
+	}
+	
+	public void placeWall() {
+		
+	}
+	
+	private boolean validMove() {
+		
+		return false;
+	}
 	//TODO
 	private boolean isGameOver() {
 		return false;
@@ -167,6 +186,8 @@ public class Model extends Observable {
 				s += "(" + i +", "+ j +") ||| " + this.board.get(i).get(j) + "\n";
 			}
 		}
+		s += "PLAYER 1: " + playerOne.getPosition()[0] + " " + playerOne.getPosition()[1] + "\n";
+		s += "PLAYER 2: " + playerTwo.getPosition()[0] + " " + playerTwo.getPosition()[1];
 		return s;
 	}
 	
