@@ -1,8 +1,10 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 import java.util.Observable;
 
 public class Model extends Observable {
@@ -19,12 +21,12 @@ public class Model extends Observable {
 	
 	//private boolean gameOver;
 	
-	public Model(int size) {
+	public Model(int size) throws Exception {
 		try {
 		// Sets the board size and creates board and players
 		setBoardSize(size);
 		} catch(Exception e) {
-			System.out.println("Object not created: " + e.getMessage());
+			throw new Exception("Object not created: " + e.getMessage());
 		}
 	}
 	
@@ -39,23 +41,22 @@ public class Model extends Observable {
 				if(j == ((this.boardSize - 1) / 2)) {
 					// If we are in the top row, add player one in the space
 					if(i == 0) {
-						System.out.println("LOL GOTTEM");
-						this.board.get(i).add(j, new Space(playerOne));
+						this.board.get(i).add(j, new Space(playerOne, i, j));
 						playerOne.setPosition(new int[]{i, j});
 					}
 					// If we are in the bottom row, add player two in the space
 					else if(i == (size-1)) {
-						this.board.get(i).add(j, new Space(playerTwo));
+						this.board.get(i).add(j, new Space(playerTwo, i, j));
 						playerTwo.setPosition(new int[]{i, j});
 					}
 					// Add generic space if none of those things
 					else {
-						this.board.get(i).add(j, new Space());
+						this.board.get(i).add(j, new Space(i, j));
 					}
 				}
 				// Add generic space if not in top or bottom row
 				else {
-					this.board.get(i).add(j, new Space());
+					this.board.get(i).add(j, new Space(i, j));
 				}
 			}
 		}
@@ -160,31 +161,101 @@ public class Model extends Observable {
 		
 	}
 	
-	public void placeWall() {
+	public void placeWall(int x, int y, String key) throws Exception {
+		// Temporary fence;
+		Fence temp = null;
+		if(key.equals("top")) {
+			temp = this.board.get(x).get(y).getTop();
+		} else if(key.equals("bottom")) {
+			temp = this.board.get(x).get(y).getBottom();
+		} else if(key.equals("left")) {
+			temp = this.board.get(x).get(y).getLeft();
+		} else if(key.equals("right")) {
+			temp = this.board.get(x).get(y).getRight();
+		} else {
+			throw new Exception("There are no fences called: " + key);
+		}
 		
+		if(temp.getPlaced()) {
+			throw new Exception("There is already a fence there!");
+		}
+		
+		// Place the fence so we can make sure its valid for both players
+		temp.placeFence();
+		// Test validity for both players
+		// If either makes it an invalid move, then the fence is removed, and exception thrown
+		if(!(validFencePlacement(playerOne) && validFencePlacement(playerTwo))) {
+			temp.removeFence();
+			throw new Exception("You are not allowed to block a path to a player goal!");
+		}	
 	}
 	
 	// If a valid move from player
-	private boolean validMove(Player player) {
+	private boolean validFencePlacement(Player player) {
+		// By default the fence placement is not valid
+		boolean valid = false;
 		int x = player.getPosition()[0];
 		int y = player.getPosition()[1];
 		// Queue of searching
 		Queue<Space> q = new LinkedList<Space>();
-		// ArrayList of all seen Spaces
-		ArrayList<Space> seen = new ArrayList<Space>();
+		// A set of all seen Spaces
+		Set<Space> seen = new HashSet<Space>();
+		// An ArrayList of spaces that we want to reach
 		ArrayList<Space> goalSpaces = new ArrayList<Space>();
-		// Add the player location to the queue
-		q.add(this.board.get(x).get(y));
 		
-		while(!q.isEmpty()) {
-			
+		// Add the player location space to the queue
+		q.add(this.board.get(x).get(y));
+		// Adds the space to the seen set
+		seen.add(this.board.get(x).get(y));
+		// Creates the seen spaces depending on the player
+		// For player two its goal is to get to row 0
+		int row = 0;
+		// For player one its goal is to get to row 1
+		if(player.equals(playerOne)) {
+			row = this.boardSize - 1;
+		}
+		for(int i = 0; i < this.boardSize; i++) {
+			goalSpaces.add(this.board.get(row).get(i));
 		}
 		
-		
-	
-		return false;
+		while(!q.isEmpty()) {
+			Space temp = q.remove();
+			int tempX = temp.getPosition()[0];
+			int tempY = temp.getPosition()[1];
+			// If temp has been seen already, continue
+			if(seen.contains(temp)) {
+				continue;
+			}
+			// If goal spaces contains temp, then player can make it to its positions.
+			if(goalSpaces.contains(temp)) {
+				valid = true;
+				break;
+			}
+			
+			// If there is no top fence placed
+			if(!temp.getTop().getPlaced()) {
+				q.add(this.board.get(tempX - 1).get(tempY));
+				seen.add(this.board.get(tempX - 1).get(tempY));
+			}
+			// If there is no bottom fence placed
+			if(!temp.getBottom().getPlaced()) {
+				q.add(this.board.get(tempX + 1).get(tempY));
+				seen.add(this.board.get(tempX + 1).get(tempY));
+			}
+			// If there is no left fence placed
+			if(!temp.getLeft().getPlaced()) {
+				q.add(this.board.get(tempX).get(tempY - 1));
+				seen.add(this.board.get(tempX).get(tempY - 1));
+			}
+			// If there is no right fence placed
+			if(!temp.getRight().getPlaced()) {
+				q.add(this.board.get(tempX).get(tempY + 1));
+				seen.add(this.board.get(tempX).get(tempY + 1));
+			}
+		}
+		return valid;
 	}
-	//TODO
+	
 	private boolean isGameOver() {
 		return false;
 	}

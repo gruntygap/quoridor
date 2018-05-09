@@ -36,4 +36,8 @@ public class Fence {
 			this.placed = true;
 		}
 	}
+	
+	public void removeFence() {
+		this.placed = false;
+	}
 }
