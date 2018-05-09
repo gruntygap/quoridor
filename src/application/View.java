@@ -54,7 +54,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		this.setStyle("-fx-background-color: B6D6DD;");
 	    
 		// a Model object used to communicate with the model
-		model = new Model(5);
+		model = new Model(11);
 		// Adds this class to a list of subscribers to Model
 		model.addObserver(this);
 		
@@ -172,15 +172,42 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 	}
 	
 	public void fillGameBoard() {
+		int c = 12;
+		if (model.getBoardSize() == 5) {
+			c = 30;
+		}else if (model.getBoardSize() == 7) {
+			c = 21;
+		}else if (model.getBoardSize() == 11) {
+			c = 15;
+		}
 		gameBoard = new GridPane();
 		gameBoard.setAlignment(Pos.CENTER);
-		gameBoard.add(new Button("NUT!"), 0, 0);
-		for (int i = 0; i < model.getBoardSize(); i ++) {
-			for (int j = 0; j < model.getBoardSize(); j ++) {
-				
+		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
+			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
+				int p = i;
+				int q = j;
+				Button b = new Button(" " + i + " - " + j);
+				if (i % 2 == 1 && j % 2 == 1) {
+					b.setMinSize(c * 1, c * 1);
+					b.setMaxSize(c * 1, c * 1);
+				}else if (i % 2 == 1) {
+					b.setMinSize(c * 1, c * 3);
+					b.setMaxSize(c * 1, c * 3);
+				}else if (j %2 == 1) {
+					b.setMinSize(c * 3, c * 1);
+					b.setMaxSize(c * 3, c * 1);
+				}else {
+					b.setMinSize(c * 3, c * 3);
+					b.setMaxSize(c * 3, c * 3);
+				}
+				b.setStyle("-fx-background-color: Transparent;-fx-border-color: #879E26;");
+				b.setOnAction((event) -> {
+					System.out.println(p + " " + q);
+				});
+				gameBoard.add(b, i, j);
 			}
 		}
-		
+//		gameBoard.setStyle("-fx-background-color: white; -fx-grid-lines-visible: true");
 		this.setCenter(gameBoard);
 	}
 
