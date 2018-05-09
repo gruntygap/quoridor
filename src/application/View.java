@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -54,7 +55,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		this.setStyle("-fx-background-color: B6D6DD;");
 	    
 		// a Model object used to communicate with the model
-		model = new Model(11);
+		model = new Model(5);
 		// Adds this class to a list of subscribers to Model
 		model.addObserver(this);
 		
@@ -124,8 +125,11 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 			try {
 				model.setBoardSize(sizeSelect.getSelectionModel().getSelectedItem());
 			} catch (Exception e) {
-				//TODO THROW ALERT// TODO Auto-generated catch block
-				e.printStackTrace();
+				
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setTitle("Board size error");
+				alert.setContentText(e.getMessage());
+				alert.showAndWait();
 			}
 		});
 		
@@ -133,7 +137,6 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		GridPane topRightGP = new GridPane();
 		
 		// Adds the various data to the GridPane
-		topRightGP.add(new Label("\t"), 0, 0);
 		topRightGP.add(feedback, 1, 0);
 		topRightGP.add(sizeText, 1, 1);
 		topRightGP.add(sizeSelect, 2, 1);
@@ -186,37 +189,37 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
 				int p = i;
 				int q = j;
-				Button b = new Button(" " + i + " - " + j);
+				SpaceButton b = new SpaceButton(j + ", " + i);
+				b.setData(i, j);
 				if (i % 2 == 1 && j % 2 == 1) {
 					b.setMinSize(c * 1, c * 1);
 					b.setMaxSize(c * 1, c * 1);
 					b.setOnAction((event) -> {
-						System.out.println("Invalid: " + p + " " + q);
+						System.out.println("Invalid: " + b.getRow() + ", " + b.getColumn());
 					});
 				}else if (i % 2 == 1) {
 					b.setMinSize(c * 1, c * 3);
 					b.setMaxSize(c * 1, c * 3);
 					b.setOnAction((event) -> {
-						System.out.println("Vertical Fence: " + p + " " + q);
+						System.out.println("Vertical Fence: " + b.getRow() + ", " + b.getColumn());
 					});
 				}else if (j %2 == 1) {
 					b.setMinSize(c * 3, c * 1);
 					b.setMaxSize(c * 3, c * 1);
 					b.setOnAction((event) -> {
-						System.out.println("Horizontal Fence: " + p + " " + q);
+						System.out.println("Horizontal Fence: " + b.getRow() + ", " + b.getColumn());
 					});
 				}else {
 					b.setMinSize(c * 3, c * 3);
 					b.setMaxSize(c * 3, c * 3);
 					b.setOnAction((event) -> {
-						System.out.println("Playable area: " + p + ", " + q);
+						System.out.println("Playable area: " + b.getRow() + ", " + b.getColumn());
 					});
 				}
 				b.setStyle("-fx-background-color: Transparent;-fx-border-color: #879E26;");
 				gameBoard.add(b, i, j);
 			}
 		}
-//		gameBoard.setStyle("-fx-background-color: white; -fx-grid-lines-visible: true");
 		this.setCenter(gameBoard);
 	}
 
