@@ -190,20 +190,29 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 				if (i % 2 == 1 && j % 2 == 1) {
 					b.setMinSize(c * 1, c * 1);
 					b.setMaxSize(c * 1, c * 1);
+					b.setOnAction((event) -> {
+						System.out.println("Invalid: " + p + " " + q);
+					});
 				}else if (i % 2 == 1) {
 					b.setMinSize(c * 1, c * 3);
 					b.setMaxSize(c * 1, c * 3);
+					b.setOnAction((event) -> {
+						System.out.println("Vertical Fence: " + p + " " + q);
+					});
 				}else if (j %2 == 1) {
 					b.setMinSize(c * 3, c * 1);
 					b.setMaxSize(c * 3, c * 1);
+					b.setOnAction((event) -> {
+						System.out.println("Horizontal Fence: " + p + " " + q);
+					});
 				}else {
 					b.setMinSize(c * 3, c * 3);
 					b.setMaxSize(c * 3, c * 3);
+					b.setOnAction((event) -> {
+						System.out.println("Playable area: " + p + ", " + q);
+					});
 				}
 				b.setStyle("-fx-background-color: Transparent;-fx-border-color: #879E26;");
-				b.setOnAction((event) -> {
-					System.out.println(p + " " + q);
-				});
 				gameBoard.add(b, i, j);
 			}
 		}
