@@ -13,6 +13,8 @@ public class Model extends Observable {
 	
 	private Player playerTwo;
 	
+	private int turn;
+	
 	//private boolean gameOver;
 	
 	public Model(int size) {
@@ -32,9 +34,10 @@ public class Model extends Observable {
 			this.board.add(i, new ArrayList<Space>());
 			for(int j = 0; j < size; j++) {
 				// If the added space is along the center column
-				if(j == (j / 2) + 1) {
+				if(j == ((this.boardSize - 1) / 2)) {
 					// If we are in the top row, add player one in the space
 					if(i == 0) {
+						System.out.println("LOL GOTTEM");
 						this.board.get(i).add(j, new Space(playerOne));
 					}
 					// If we are in the bottom row, add player two in the space
@@ -110,9 +113,10 @@ public class Model extends Observable {
 
 	public void setBoardSize(int size) throws Exception {
 		if(size > 1 && size % 2 != 0) {
+			resetPlayers();
 			this.boardSize = size;
 			createBoard(size);
-			resetPlayers();
+			this.turn = 1;
 		} else {
 			throw new Exception("Size is an invalid number!");
 		}
@@ -120,6 +124,40 @@ public class Model extends Observable {
 	
 	public ArrayList<ArrayList<Space>> getBoard(){
 		return board;
+	}
+	
+	private void changeTurn() {
+		if(turn == 1) {
+			turn = 2;
+		} else if(turn == 2) {
+			turn = 1;
+		}
+	}
+	
+	public String getFeedBack() {
+		if(isGameOver()) {
+			return "Player " + turn + " Won!";
+		}
+		else if(turn == 1) {
+			return "It is " + playerOne.getIdentifier() + "'s turn"; 
+		}
+		else if(turn == 2) {
+			return "It is " + playerTwo.getIdentifier() + "'s turn";
+		} else {
+			return "";
+		}
+	}
+	//TODO
+	private boolean isGameOver() {
+		return false;
+	}
+	
+	public Player getPlayerOne() {
+		return playerOne;
+	}
+	
+	public Player getPlayerTwo() {
+		return playerTwo;
 	}
 	
 	public String toString() {

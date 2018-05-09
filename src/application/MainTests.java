@@ -30,4 +30,14 @@ class MainTests {
 		}
 		System.out.println(model.getBoard().get(0).get(0).getRight().getPlaced() + " -> " + model.getBoard().get(0).get(1).getLeft().getPlaced());
 	}
+	
+	@Test
+	void verifyPlayerLocation() {
+		System.out.println("=============================================================================================================================================================");
+		System.out.println("");
+		Model model = new Model(5);
+		
+		assertTrue(model.getBoard().get(0).get(2).getPlayerSpace().equals(model.getPlayerOne()));
+		
+	}
 }
