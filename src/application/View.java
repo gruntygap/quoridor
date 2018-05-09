@@ -3,7 +3,6 @@ package application;
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -17,14 +16,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 
@@ -43,9 +39,14 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 	// Instance variable for Label that displays player's turn and who won
 	private Text feedback;
 	
+	// Instance variable used to scale text
 	private ObjectProperty<Font> widthFontTracking = new SimpleObjectProperty<Font>(Font.getDefault());
 	
+	// Instance variable used to scale text
 	private ObjectProperty<Font> heightFontTracking = new SimpleObjectProperty<Font>(Font.getDefault());
+	
+	// Instance variable that displays the playable board
+	private GridPane gameBoard;
 	
 	public View() {
 		
@@ -56,6 +57,9 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		model = new Model(5);
 		// Adds this class to a list of subscribers to Model
 		model.addObserver(this);
+		
+		// Displays the gameBoard
+		this.fillGameBoard();
 		
 		// Adds a BorderPane to organize the top part of the board
 		BorderPane topBP = new BorderPane();
@@ -117,7 +121,12 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		sizeSelect.setStyle("-fx-background-color: #C2C4C6;");
 		// Tells us that this class handles changes to the ComboBox
 		sizeSelect.setOnAction((event) -> {
-			model.setSize(sizeSelect.getSelectionModel().getSelectedItem());
+			try {
+				model.setBoardSize(sizeSelect.getSelectionModel().getSelectedItem());
+			} catch (Exception e) {
+				//TODO THROW ALERT// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		});
 		
 		// Creates a GridPane to hold data of right side of page
@@ -160,6 +169,19 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 	        }
 	    });
 		
+	}
+	
+	public void fillGameBoard() {
+		gameBoard = new GridPane();
+		gameBoard.setAlignment(Pos.CENTER);
+		gameBoard.add(new Button("NUT!"), 0, 0);
+		for (int i = 0; i < model.getBoardSize(); i ++) {
+			for (int j = 0; j < model.getBoardSize(); j ++) {
+				
+			}
+		}
+		
+		this.setCenter(gameBoard);
 	}
 
 	@Override

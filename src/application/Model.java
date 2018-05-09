@@ -17,13 +17,8 @@ public class Model extends Observable {
 	
 	public Model(int size) {
 		try {
-		// Sets the board size
+		// Sets the board size and creates board and players
 		setBoardSize(size);
-		// Initialize Players
-		this.playerOne = new Player("Player 1");
-		this.playerTwo = new Player("Player 2");
-		// Creates the board
-		createBoard(size);
 		} catch(Exception e) {
 			System.out.println("Object not created: " + e.getMessage());
 		}
@@ -102,14 +97,22 @@ public class Model extends Observable {
 			}
 		}
 	}
+	
+	private void resetPlayers() {
+		// Initialize/Reset Players
+		this.playerOne = new Player("Player 1");
+		this.playerTwo = new Player("Player 2");
+	}
 
 	public int getBoardSize() {
 		return boardSize;
 	}
 
-	private void setBoardSize(int size) throws Exception {
+	public void setBoardSize(int size) throws Exception {
 		if(size > 1 && size % 2 != 0) {
 			this.boardSize = size;
+			createBoard(size);
+			resetPlayers();
 		} else {
 			throw new Exception("Size is an invalid number!");
 		}
