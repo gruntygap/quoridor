@@ -1,6 +1,8 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Observable;
 
 public class Model extends Observable {
@@ -162,8 +164,24 @@ public class Model extends Observable {
 		
 	}
 	
-	private boolean validMove() {
+	// If a valid move from player
+	private boolean validMove(Player player) {
+		int x = player.getPosition()[0];
+		int y = player.getPosition()[1];
+		// Queue of searching
+		Queue<Space> q = new LinkedList<Space>();
+		// ArrayList of all seen Spaces
+		ArrayList<Space> seen = new ArrayList<Space>();
+		ArrayList<Space> goalSpaces = new ArrayList<Space>();
+		// Add the player location to the queue
+		q.add(this.board.get(x).get(y));
 		
+		while(!q.isEmpty()) {
+			
+		}
+		
+		
+	
 		return false;
 	}
 	//TODO
