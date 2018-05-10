@@ -276,74 +276,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 				}
 			}
 		}
-		
-		
-				
-//		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
-//			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
-//				int x = j/2;
-//				int y = i/2;
-//				// Creates generic SpaceButton
-//				buttonGrid.get(x).add(y, new SpaceButton(x + ", " + y));
-//				SpaceButton b = buttonGrid.get(x).get(y);
-//				if (model.getBoard().get(x).get(y).getPlayerSpace() != null) {
-//					b.setText("Player");
-//				}
-//				b.setData(x, y);
-//				// Scales each button to the correct size.
-//				if (i % 2 == 1 && j % 2 == 1) { 
-//					// Creates the squares in between fence junctions that do absolutely nothing but look semi-okay
-//					SpaceButton sB = b;
-//					sB.setMinSize(c * 1, c * 1);
-//					sB.setMaxSize(c * 1, c * 1);
-//					sB.setStyle("-fx-background-color: #533226;-fx-border-color: #533226;");
-//				}else if (i % 2 == 1) {
-//					// Creates vertical areas for fences to be placed in
-//					b.setMinSize(c * 1, c * 3);
-//					b.setMaxSize(c * 1, c * 3);
-//					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
-//					b.setOnAction((event) -> {
-//						System.out.println("Vertical Fence: " + b.getRow() + ", " + b.getColumn());
-//						//b.setText("Placed");
-//						//b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
-//						try {
-//							model.placeFence(x, y, "right");
-//						} catch (Exception e) {
-//								alertMethod(e);
-//						}
-//					});
-//				}else if (j %2 == 1) {
-//					// Creates horizontal areas for fences to be placed in
-//					b.setMinSize(c * 3, c * 1);
-//					b.setMaxSize(c * 3, c * 1);
-//					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
-//					b.setOnAction((event) -> {
-//						System.out.println("Horizontal Fence: " + b.getRow() + ", " + b.getColumn());
-//						//b.setText("Placed");
-//						//b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
-//						try {
-//							model.placeFence(x, y, "bottom");
-//						} catch (Exception e) {
-//							alertMethod(e);
-//						}
-//					});
-//				}else {
-//					// Creates area for player to move into if valid
-//					b.setMinSize(c * 3, c * 3);
-//					b.setMaxSize(c * 3, c * 3);
-//					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
-//					b.setOnAction((event) -> {
-//						System.out.println("Playable area: " + b.getRow() + ", " + b.getColumn());
-//						try {
-//							model.makeMove(x, y);
-//						} catch(Exception e) {
-//							alertMethod(e);
-//						}
-//					});
-//				}
-//				gameBoard.add(b, i, j);
-//			}
-//		}
+		this.updateGameBoard();
 	}
 	
 	// TODO
@@ -351,7 +284,31 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		// Loop through the gridPane, updating all elements
 		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
 			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
+				// TODO PLAYER CASE
+				if (buttonGrid.get(i).get(j).getType().equals("space")) {
+					if (model.getBoard().get(i/2).get(j/2).getPlayerSpace() != null) {
+						if(model.getBoard().get(i/2).get(j/2).getPlayerSpace().equals(model.getPlayerOne()))
+							buttonGrid.get(i).get(j).setStyle("-fx-background-color: #ffffff;");
+						else
+							buttonGrid.get(i).get(j).setStyle("-fx-background-color: #000000;");
+					} else {
+						buttonGrid.get(i).get(j).setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
+					}
+//					else if (model.getBoard().get(i/2).get(j/2).getPlayerSpace().equals(model.getPlayerTwo())) {
+//						buttonGrid.get(i).get(j).setStyle("-fx-background-color: #000000;");
+//					}
+				}
 				
+				if (buttonGrid.get(i).get(j).getType().equals("horiz-fence")) {
+					if(model.getBoard().get(i/2).get(j/2).getBottom().getPlaced()) {
+						buttonGrid.get(i).get(j).setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+					}
+				}
+				if(buttonGrid.get(i).get(j).getType().equals("vert-fence")) {
+					if(model.getBoard().get(i/2).get(j/2).getRight().getPlaced()) {
+						buttonGrid.get(i).get(j).setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+					}
+				}
 			}
 		}
 	}
@@ -369,6 +326,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 			this.fillGameBoard();
 			this.feedback.setText(model.getFeedBack());
 		}else if (arg1.equals("updateBoard")) {
+			this.updateGameBoard();
 			this.feedback.setText(model.getFeedBack());
 		}
 	}
