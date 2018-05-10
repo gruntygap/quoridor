@@ -69,10 +69,11 @@ class MainTests {
 		try {
 			model.placeFence(0, 0, "bottom"); // change Player 2 turn
 			model.placeFence(0, 1, "bottom"); // change Player 1 turn
-			model.placeFence(0, 2, "bottom"); //
+			model.placeFence(0, 2, "bottom"); // change Player 2 turn
+			model.placeFence(0, 3, "bottom"); // change Player 1 turn
+			model.placeFence(0, 4, "bottom"); // change Player 2 turn
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			assertTrue(e.getMessage().equals("You are not allowed to block a path to a player goal!"));
 		}
 		System.out.println(model);
 		

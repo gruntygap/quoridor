@@ -273,8 +273,7 @@ public class Model extends Observable {
 		
 		// Add the player location space to the queue
 		q.add(this.board.get(x).get(y));
-		// Adds the space to the seen set
-		seen.add(this.board.get(x).get(y));
+
 		// Creates the seen spaces depending on the player
 		// For player two its goal is to get to row 0
 		int row = 0;
@@ -303,23 +302,25 @@ public class Model extends Observable {
 			// If there is no top fence placed
 			if(!temp.getTop().getPlaced()) {
 				q.add(this.board.get(tempX - 1).get(tempY));
-				seen.add(this.board.get(tempX - 1).get(tempY));
+				//seen.add(this.board.get(tempX - 1).get(tempY));
 			}
 			// If there is no bottom fence placed
 			if(!temp.getBottom().getPlaced()) {
 				q.add(this.board.get(tempX + 1).get(tempY));
-				seen.add(this.board.get(tempX + 1).get(tempY));
+				//seen.add(this.board.get(tempX + 1).get(tempY));
 			}
 			// If there is no left fence placed
 			if(!temp.getLeft().getPlaced()) {
 				q.add(this.board.get(tempX).get(tempY - 1));
-				seen.add(this.board.get(tempX).get(tempY - 1));
+				//seen.add(this.board.get(tempX).get(tempY - 1));
 			}
 			// If there is no right fence placed
 			if(!temp.getRight().getPlaced()) {
 				q.add(this.board.get(tempX).get(tempY + 1));
-				seen.add(this.board.get(tempX).get(tempY + 1));
+				//seen.add(this.board.get(tempX).get(tempY + 1));
 			}
+			// Adds the space to the seen set
+			seen.add(temp);
 		}
 		return valid;
 	}
