@@ -218,7 +218,6 @@ public class View extends BorderPane implements Observer {
 				// Creates fence-posts which have a default dark brown color and don't do anything/
 				// can't be interacted with.
 				if (i % 2 == 1 && j % 2 == 1) { 
-					// TODO REMOVE TESTING
 					//buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "fence-post"));
 					buttonGrid.get(i).add(new SpaceButton("", "fence-post"));
 					buttonGrid.get(i).get(j).setMinSize(c * 1, c * 1);
@@ -229,7 +228,6 @@ public class View extends BorderPane implements Observer {
 				// clicked and then the updateGameBoard() method changes their color to brown and 
 				// sets them to placed using the model if valid
 				else if(j % 2 == 1){
-					// TODO REMOVE TESTING
 					//buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "vert-fence"));
 					buttonGrid.get(i).add(new SpaceButton("", "vert-fence"));
 					buttonGrid.get(i).get(j).setMinSize(c * 1, c * 3);
@@ -240,7 +238,6 @@ public class View extends BorderPane implements Observer {
 				// clicked and then the updateGameBoard() method changes their color to brown and
 				// sets them to placed using the model if valid
 				else if(i % 2 == 1){
-					// TODO REMOVE TESTING
 					//buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "horiz-fence"));
 					buttonGrid.get(i).add(new SpaceButton("", "horiz-fence"));
 					buttonGrid.get(i).get(j).setMinSize(c * 3, c * 1);
@@ -250,7 +247,6 @@ public class View extends BorderPane implements Observer {
 				// Creates spaces which players can move into, which are colored the default color until placed
 				// which then the assigned player image moves into that button
 				else {
-					// TODO REMOVE TESTING
 					//buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "space"));
 					buttonGrid.get(i).add(new SpaceButton("", "space"));
 					buttonGrid.get(i).get(j).setMinSize(c * 3, c * 3);
@@ -283,7 +279,6 @@ public class View extends BorderPane implements Observer {
 				if(type.equals("space")) {
 					// This is a playable space SpaceButton
 					sB.setOnAction((event) -> {
-						// TODO REMOVE TESTING 
 						//System.out.println("Playable area: " + sB.getRow() + ", " + sB.getColumn());
 						// Try to make a move, but if it is not possible display an error as to why it cannot be completed
 						try {
@@ -295,7 +290,6 @@ public class View extends BorderPane implements Observer {
 				} else if(type.equals("vert-fence")) {
 					// This is a vertical fence SpaceButton
 					sB.setOnAction((event) -> {
-						// TODO REMOVE TESTING
 						//System.out.println("Vertical Fence: " + sB.getRow() + ", " + sB.getColumn());
 						// Try to place the vertical fence, but if it is not possible display an error as to why it cannot be completed
 						try {
@@ -307,7 +301,6 @@ public class View extends BorderPane implements Observer {
 				} else if(type.equals("horiz-fence")) {
 					// This is a horizontal fence SpaceButton
 					sB.setOnAction((event) -> {
-						// TODO REMOVE TESTING
 						//System.out.println("Horizontal Fence: " + sB.getRow() + ", " + sB.getColumn());
 						// Try to place the horizontal fence, but if it is not possible display an error as to why it cannot be completed
 						try {
@@ -379,7 +372,7 @@ public class View extends BorderPane implements Observer {
 
 	/**
 	 * Alert method used to display Alerts when an error is thrown
-	 * @param e
+	 * @param e the received Exception
 	 */
 	public void alertMethod(Exception e) {
 		Alert alert = new Alert(Alert.AlertType.ERROR);
