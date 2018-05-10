@@ -124,7 +124,7 @@ public class Model extends Observable {
 			this.turn = 1;
 			this.setChanged();
 			// TODO MAYBE INPUT DATA INTO THIS METHOD
-			this.notifyObservers();
+			this.notifyObservers("reset");
 		} else {
 			throw new Exception("Size is an invalid number!");
 		}
@@ -178,7 +178,7 @@ public class Model extends Observable {
 		changeTurn();
 		this.setChanged();
 		// TODO MAYBE INPUT DATA INTO THIS METHOD
-		this.notifyObservers();
+		this.notifyObservers("updateBoard");
 	}
 	
 	private boolean validPlayerMove(Player currentPlayer, int x, int y) {
@@ -264,7 +264,7 @@ public class Model extends Observable {
 		changeTurn();
 		this.setChanged();
 		// TODO MAYBE INPUT DATA INTO THIS METHOD
-		this.notifyObservers();
+		this.notifyObservers("updateBoard");
 	}
 	
 	// If a valid move from player
@@ -358,6 +358,7 @@ public class Model extends Observable {
 	}
 	
 	public void resetGame() throws Exception {
+		this.turn = 1;
 		this.setBoardSize(this.boardSize);
 	}
 	

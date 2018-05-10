@@ -1,7 +1,6 @@
 package application;
 
 import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
 
 public class SpaceButton extends Button {
 	
@@ -17,10 +16,10 @@ public class SpaceButton extends Button {
 	}
 
 	public int getColumn() {
-		return data[0];
+		return data[1];
 	}
 	
 	public int getRow() {
-		return data[1];
+		return data[0];
 	}
 }

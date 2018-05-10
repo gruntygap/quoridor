@@ -1,5 +1,6 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -15,7 +16,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -48,6 +48,8 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 	
 	// Instance variable that displays the playable board
 	private GridPane gameBoard;
+	
+	private ArrayList<ArrayList<SpaceButton>> buttonGrid;
 	
 	public View() {
 		
@@ -186,58 +188,92 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		}else if (model.getBoardSize() == 11) {
 			c = 15;
 		}
+		
+		buttonGrid = new ArrayList<ArrayList<SpaceButton>>();
+		for(int i = 0; i < model.getBoardSize(); i++) {
+			buttonGrid.add(new ArrayList<SpaceButton>());
+		}
 		gameBoard = new GridPane();
 		gameBoard.setAlignment(Pos.CENTER);
 		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
 			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
-				int p = i;
-				int q = j;
-				SpaceButton b = new SpaceButton(j + ", " + i);
-				b.setData(i, j);
+				int x = j/2;
+				int y = i/2;
+				// Creates generic SpaceButton
+				buttonGrid.get(x).add(y, new SpaceButton(x + ", " + y));
+				SpaceButton b = buttonGrid.get(x).get(y);
+				if (model.getBoard().get(x).get(y).getPlayerSpace() != null) {
+					b.setText("Player");
+				}
+				b.setData(x, y);
 				// Scales each button to the correct size.
-				if (i % 2 == 1 && j % 2 == 1) {
+				if (i % 2 == 1 && j % 2 == 1) { 
+					// Creates the squares in between fence junctions that do absolutely nothing but look semi-okay
 					SpaceButton sB = b;
 					sB.setMinSize(c * 1, c * 1);
 					sB.setMaxSize(c * 1, c * 1);
 					sB.setStyle("-fx-background-color: #533226;-fx-border-color: #533226;");
-					sB.setOnAction((event) -> {
-						System.out.println("Invalid: " + b.getRow() + ", " + b.getColumn());
-					});
 				}else if (i % 2 == 1) {
+					// Creates vertical areas for fences to be placed in
 					b.setMinSize(c * 1, c * 3);
 					b.setMaxSize(c * 1, c * 3);
 					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 					b.setOnAction((event) -> {
 						System.out.println("Vertical Fence: " + b.getRow() + ", " + b.getColumn());
-						b.setText("Placed");
-						b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+						//b.setText("Placed");
+						//b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+						try {
+							model.placeFence(x, y, "right");
+						} catch (Exception e) {
+								alertMethod(e);
+						}
 					});
 				}else if (j %2 == 1) {
+					// Creates horizontal areas for fences to be placed in
 					b.setMinSize(c * 3, c * 1);
 					b.setMaxSize(c * 3, c * 1);
 					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 					b.setOnAction((event) -> {
 						System.out.println("Horizontal Fence: " + b.getRow() + ", " + b.getColumn());
-						b.setText("Placed");
-						b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+						//b.setText("Placed");
+						//b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+						try {
+							model.placeFence(x, y, "bottom");
+						} catch (Exception e) {
+							alertMethod(e);
+						}
 					});
 				}else {
+					// Creates area for player to move into if valid
 					b.setMinSize(c * 3, c * 3);
 					b.setMaxSize(c * 3, c * 3);
 					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 					b.setOnAction((event) -> {
 						System.out.println("Playable area: " + b.getRow() + ", " + b.getColumn());
-						
+						try {
+							model.makeMove(x, y);
+						} catch(Exception e) {
+							alertMethod(e);
+						}
 					});
 				}
 				gameBoard.add(b, i, j);
 			}
 		}
-		// Sets the outside border color of the gameBoard
-//		gameBoard.setStyle("-fx-border-width: 3px; -fx-border-color: #1F569E; -fx-alignment: center;");
+		// Sets the outside border color of the gameBoar
 		gameBoard.setStyle("-fx-border-width: 3px; -fx-border-color: #72048F; -fx-alignment: center;");
 		gameBoard.setMaxSize(500, 500);
 		this.setCenter(gameBoard);
+	}
+	
+	// TODO
+	public void updateGameBoard() {
+		// Loop through the gridPane, updating all elements
+		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
+			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
+				
+			}
+		}
 	}
 	
 	public void alertMethod(Exception e) {
@@ -249,8 +285,12 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		this.fillGameBoard();
-		
+		if (arg1.equals("reset")) {
+			this.fillGameBoard();
+			this.feedback.setText(model.getFeedBack());
+		}else if (arg1.equals("updateBoard")) {
+			this.feedback.setText(model.getFeedBack());
+		}
 	}
 
 	@Override
