@@ -189,37 +189,71 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 			c = 15;
 		}
 		
-		buttonGrid = new ArrayList<ArrayList<SpaceButton>>();
-		for(int i = 0; i < model.getBoardSize(); i++) {
-			buttonGrid.add(new ArrayList<SpaceButton>());
-		}
 		gameBoard = new GridPane();
 		gameBoard.setAlignment(Pos.CENTER);
-		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
-			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
-				int x = j/2;
-				int y = i/2;
-				// Creates generic SpaceButton
-				buttonGrid.get(x).add(y, new SpaceButton(x + ", " + y));
-				SpaceButton b = buttonGrid.get(x).get(y);
-				if (model.getBoard().get(x).get(y).getPlayerSpace() != null) {
-					b.setText("Player");
-				}
-				b.setData(x, y);
-				// Scales each button to the correct size.
+		
+		// Make all Buttons
+		buttonGrid = new ArrayList<ArrayList<SpaceButton>>();
+		for(int i = 0; i < model.getBoardSize()*2 - 1; i++) {
+			buttonGrid.add(new ArrayList<SpaceButton>());
+			for(int j = 0; j < model.getBoardSize()*2 - 1; j++) {
+				// For fence-posts
 				if (i % 2 == 1 && j % 2 == 1) { 
-					// Creates the squares in between fence junctions that do absolutely nothing but look semi-okay
-					SpaceButton sB = b;
-					sB.setMinSize(c * 1, c * 1);
-					sB.setMaxSize(c * 1, c * 1);
-					sB.setStyle("-fx-background-color: #533226;-fx-border-color: #533226;");
-				}else if (i % 2 == 1) {
-					// Creates vertical areas for fences to be placed in
-					b.setMinSize(c * 1, c * 3);
-					b.setMaxSize(c * 1, c * 3);
-					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
-					b.setOnAction((event) -> {
-						System.out.println("Vertical Fence: " + b.getRow() + ", " + b.getColumn());
+					 buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "fence-post"));
+					 buttonGrid.get(i).get(j).setMinSize(c * 1, c * 1);
+					 buttonGrid.get(i).get(j).setMaxSize(c * 1, c * 1);
+					 buttonGrid.get(i).get(j).setStyle("-fx-background-color: #533226;-fx-border-color: #533226;");
+				}
+				// for vert-fence (s)
+				else if(j % 2 == 1){
+					buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "vert-fence"));
+					buttonGrid.get(i).get(j).setMinSize(c * 1, c * 3);
+					buttonGrid.get(i).get(j).setMaxSize(c * 1, c * 3);
+					buttonGrid.get(i).get(j).setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
+				}
+				// for horiz-fence (s)
+				else if(i % 2 == 1){
+					buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "horiz-fence"));
+					buttonGrid.get(i).get(j).setMinSize(c * 3, c * 1);
+					buttonGrid.get(i).get(j).setMaxSize(c * 3, c * 1);
+					buttonGrid.get(i).get(j).setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
+				}
+				// for space (s)
+				else {
+					buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "space"));
+					buttonGrid.get(i).get(j).setMinSize(c * 3, c * 3);
+					buttonGrid.get(i).get(j).setMaxSize(c * 3, c * 3);
+					buttonGrid.get(i).get(j).setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
+				}
+				gameBoard.add(buttonGrid.get(i).get(j), j, i);
+			}
+		}
+		
+		// Add the gameboard to the GUI
+		// Sets the outside border color of the gameBoar
+		gameBoard.setStyle("-fx-border-width: 3px; -fx-border-color: #72048F; -fx-alignment: center;");
+		gameBoard.setMaxSize(500, 500);
+		this.setCenter(gameBoard);
+		
+		// Adding handlers to each board piece
+		for(int i = 0; i < model.getBoardSize()*2 - 1; i++) {
+			for(int j = 0; j < model.getBoardSize()*2 - 1; j++) {
+				String type = buttonGrid.get(i).get(j).getType();
+				SpaceButton sB = buttonGrid.get(i).get(j);
+				int x = i/2;
+				int y = j/2;
+				if(type.equals("space")) {
+					sB.setOnAction((event) -> {
+						System.out.println("Playable area: " + sB.getRow() + ", " + sB.getColumn());
+						try {
+							model.makeMove(x, y);
+						} catch(Exception e) {
+							alertMethod(e);
+						}
+					});
+				} else if(type.equals("vert-fence")) {
+					sB.setOnAction((event) -> {
+						System.out.println("Vertical Fence: " + sB.getRow() + ", " + sB.getColumn());
 						//b.setText("Placed");
 						//b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
 						try {
@@ -228,13 +262,9 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 								alertMethod(e);
 						}
 					});
-				}else if (j %2 == 1) {
-					// Creates horizontal areas for fences to be placed in
-					b.setMinSize(c * 3, c * 1);
-					b.setMaxSize(c * 3, c * 1);
-					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
-					b.setOnAction((event) -> {
-						System.out.println("Horizontal Fence: " + b.getRow() + ", " + b.getColumn());
+				} else if(type.equals("horiz-fence")) {
+					sB.setOnAction((event) -> {
+						System.out.println("Horizontal Fence: " + sB.getRow() + ", " + sB.getColumn());
 						//b.setText("Placed");
 						//b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
 						try {
@@ -243,27 +273,77 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 							alertMethod(e);
 						}
 					});
-				}else {
-					// Creates area for player to move into if valid
-					b.setMinSize(c * 3, c * 3);
-					b.setMaxSize(c * 3, c * 3);
-					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
-					b.setOnAction((event) -> {
-						System.out.println("Playable area: " + b.getRow() + ", " + b.getColumn());
-						try {
-							model.makeMove(x, y);
-						} catch(Exception e) {
-							alertMethod(e);
-						}
-					});
 				}
-				gameBoard.add(b, i, j);
 			}
 		}
-		// Sets the outside border color of the gameBoar
-		gameBoard.setStyle("-fx-border-width: 3px; -fx-border-color: #72048F; -fx-alignment: center;");
-		gameBoard.setMaxSize(500, 500);
-		this.setCenter(gameBoard);
+		
+		
+				
+//		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
+//			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
+//				int x = j/2;
+//				int y = i/2;
+//				// Creates generic SpaceButton
+//				buttonGrid.get(x).add(y, new SpaceButton(x + ", " + y));
+//				SpaceButton b = buttonGrid.get(x).get(y);
+//				if (model.getBoard().get(x).get(y).getPlayerSpace() != null) {
+//					b.setText("Player");
+//				}
+//				b.setData(x, y);
+//				// Scales each button to the correct size.
+//				if (i % 2 == 1 && j % 2 == 1) { 
+//					// Creates the squares in between fence junctions that do absolutely nothing but look semi-okay
+//					SpaceButton sB = b;
+//					sB.setMinSize(c * 1, c * 1);
+//					sB.setMaxSize(c * 1, c * 1);
+//					sB.setStyle("-fx-background-color: #533226;-fx-border-color: #533226;");
+//				}else if (i % 2 == 1) {
+//					// Creates vertical areas for fences to be placed in
+//					b.setMinSize(c * 1, c * 3);
+//					b.setMaxSize(c * 1, c * 3);
+//					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
+//					b.setOnAction((event) -> {
+//						System.out.println("Vertical Fence: " + b.getRow() + ", " + b.getColumn());
+//						//b.setText("Placed");
+//						//b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+//						try {
+//							model.placeFence(x, y, "right");
+//						} catch (Exception e) {
+//								alertMethod(e);
+//						}
+//					});
+//				}else if (j %2 == 1) {
+//					// Creates horizontal areas for fences to be placed in
+//					b.setMinSize(c * 3, c * 1);
+//					b.setMaxSize(c * 3, c * 1);
+//					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
+//					b.setOnAction((event) -> {
+//						System.out.println("Horizontal Fence: " + b.getRow() + ", " + b.getColumn());
+//						//b.setText("Placed");
+//						//b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+//						try {
+//							model.placeFence(x, y, "bottom");
+//						} catch (Exception e) {
+//							alertMethod(e);
+//						}
+//					});
+//				}else {
+//					// Creates area for player to move into if valid
+//					b.setMinSize(c * 3, c * 3);
+//					b.setMaxSize(c * 3, c * 3);
+//					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
+//					b.setOnAction((event) -> {
+//						System.out.println("Playable area: " + b.getRow() + ", " + b.getColumn());
+//						try {
+//							model.makeMove(x, y);
+//						} catch(Exception e) {
+//							alertMethod(e);
+//						}
+//					});
+//				}
+//				gameBoard.add(b, i, j);
+//			}
+//		}
 	}
 	
 	// TODO

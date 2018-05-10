@@ -6,8 +6,11 @@ public class SpaceButton extends Button {
 	
 	private int [] data;
 	
-	public SpaceButton(String string) {
+	private String type;
+	
+	public SpaceButton(String string, String type) {
 		this.setText(string);
+		this.type = type;
 		data = new int [2];
 	}
 
@@ -21,5 +24,9 @@ public class SpaceButton extends Button {
 	
 	public int getRow() {
 		return data[0];
+	}
+	
+	public String getType() {
+		return type;
 	}
 }
