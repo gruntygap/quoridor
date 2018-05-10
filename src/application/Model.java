@@ -175,7 +175,9 @@ public class Model extends Observable {
 			throw new Exception("That is not a valid space to move to");
 		}
 		// Player has now moved, it is the other players turn
-		changeTurn();
+		if(!isGameOver()) {
+			changeTurn();
+		}
 		this.setChanged();
 		// TODO MAYBE INPUT DATA INTO THIS METHOD
 		this.notifyObservers("updateBoard");
