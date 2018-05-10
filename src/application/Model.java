@@ -122,6 +122,9 @@ public class Model extends Observable {
 			this.boardSize = size;
 			createBoard(size);
 			this.turn = 1;
+			this.setChanged();
+			// TODO MAYBE INPUT DATA INTO THIS METHOD
+			this.notifyObservers();
 		} else {
 			throw new Exception("Size is an invalid number!");
 		}
@@ -173,6 +176,9 @@ public class Model extends Observable {
 		}
 		// Player has now moved, it is the other players turn
 		changeTurn();
+		this.setChanged();
+		// TODO MAYBE INPUT DATA INTO THIS METHOD
+		this.notifyObservers();
 	}
 	
 	private boolean validPlayerMove(Player currentPlayer, int x, int y) {
@@ -256,6 +262,9 @@ public class Model extends Observable {
 		}
 		// If the player sets a valid fence, then change the turn 
 		changeTurn();
+		this.setChanged();
+		// TODO MAYBE INPUT DATA INTO THIS METHOD
+		this.notifyObservers();
 	}
 	
 	// If a valid move from player
@@ -346,6 +355,10 @@ public class Model extends Observable {
 	
 	public Player getPlayerTwo() {
 		return playerTwo;
+	}
+	
+	public void resetGame() throws Exception {
+		this.setBoardSize(this.boardSize);
 	}
 	
 	public String toString() {

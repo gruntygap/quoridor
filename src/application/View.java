@@ -55,7 +55,11 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		this.setStyle("-fx-background-color: B6D6DD;");
 	    
 		// a Model object used to communicate with the model
-		model = new Model(5);
+		try {
+			model = new Model(5);
+		} catch (Exception e) {
+			alertMethod(e);
+		}
 		// Adds this class to a list of subscribers to Model
 		model.addObserver(this);
 		
@@ -81,10 +85,8 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		// Scales the title with the width of the page
 		title.fontProperty().bind(widthFontTracking);
 		
-		//TODO temp filler label to just display what will eventually be there
-		//feedback = new Label(model.getFeedBack();
 		// Creates a nice feedback area for the game
-		feedback = new Text("Player 1's turn");
+		feedback = new Text(model.getFeedBack());
 		feedback.setFill(Color.web("#375D81"));
 		feedback.setEffect(ds);
 		feedback.setCache(true);
@@ -109,7 +111,11 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		reset.setStyle("-fx-background-color: #C2C4C6;");
 		// Tells us that this class handles button presses
 	    reset.setOnAction((event) -> {
-	    	//model.reset();
+	    	try {
+				model.resetGame();
+			} catch (Exception e) {
+				alertMethod(e);
+			}
 	    });
 		
 		// Creates a ComboBox to change sizes
@@ -125,11 +131,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 			try {
 				model.setBoardSize(sizeSelect.getSelectionModel().getSelectedItem());
 			} catch (Exception e) {
-				
-				Alert alert = new Alert(Alert.AlertType.ERROR);
-				alert.setTitle("Board size error");
-				alert.setContentText(e.getMessage());
-				alert.showAndWait();
+				alertMethod(e);
 			}
 		});
 		
@@ -175,11 +177,12 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 	}
 	
 	public void fillGameBoard() {
+		// Sets a scalar to size the game nicely
 		int c = 12;
 		if (model.getBoardSize() == 5) {
 			c = 30;
 		}else if (model.getBoardSize() == 7) {
-			c = 21;
+			c = 24;
 		}else if (model.getBoardSize() == 11) {
 			c = 15;
 		}
@@ -191,41 +194,62 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 				int q = j;
 				SpaceButton b = new SpaceButton(j + ", " + i);
 				b.setData(i, j);
+				// Scales each button to the correct size.
 				if (i % 2 == 1 && j % 2 == 1) {
-					b.setMinSize(c * 1, c * 1);
-					b.setMaxSize(c * 1, c * 1);
-					b.setOnAction((event) -> {
+					SpaceButton sB = b;
+					sB.setMinSize(c * 1, c * 1);
+					sB.setMaxSize(c * 1, c * 1);
+					sB.setStyle("-fx-background-color: #533226;-fx-border-color: #533226;");
+					sB.setOnAction((event) -> {
 						System.out.println("Invalid: " + b.getRow() + ", " + b.getColumn());
 					});
 				}else if (i % 2 == 1) {
 					b.setMinSize(c * 1, c * 3);
 					b.setMaxSize(c * 1, c * 3);
+					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 					b.setOnAction((event) -> {
 						System.out.println("Vertical Fence: " + b.getRow() + ", " + b.getColumn());
+						b.setText("Placed");
+						b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
 					});
 				}else if (j %2 == 1) {
 					b.setMinSize(c * 3, c * 1);
 					b.setMaxSize(c * 3, c * 1);
+					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 					b.setOnAction((event) -> {
 						System.out.println("Horizontal Fence: " + b.getRow() + ", " + b.getColumn());
+						b.setText("Placed");
+						b.setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
 					});
 				}else {
 					b.setMinSize(c * 3, c * 3);
 					b.setMaxSize(c * 3, c * 3);
+					b.setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 					b.setOnAction((event) -> {
 						System.out.println("Playable area: " + b.getRow() + ", " + b.getColumn());
+						
 					});
 				}
-				b.setStyle("-fx-background-color: Transparent;-fx-border-color: #879E26;");
 				gameBoard.add(b, i, j);
 			}
 		}
+		// Sets the outside border color of the gameBoard
+//		gameBoard.setStyle("-fx-border-width: 3px; -fx-border-color: #1F569E; -fx-alignment: center;");
+		gameBoard.setStyle("-fx-border-width: 3px; -fx-border-color: #72048F; -fx-alignment: center;");
+		gameBoard.setMaxSize(500, 500);
 		this.setCenter(gameBoard);
+	}
+	
+	public void alertMethod(Exception e) {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle("Game Error");
+		alert.setContentText(e.getMessage());
+		alert.showAndWait();
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
+		this.fillGameBoard();
 		
 	}
 
