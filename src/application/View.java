@@ -17,6 +17,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -50,8 +52,21 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 	private GridPane gameBoard;
 
 	private ArrayList<ArrayList<SpaceButton>> buttonGrid;
+	
+//	private ImageView playerOneImg;
+//	
+//	private ImageView playerTwoImg;
 
 	public View() {
+		
+//		playerOneImg = new ImageView(new Image("/assets/SUPREMELEADERNKBK.png"));
+//		playerOneImg.setPreserveRatio(true);
+//		
+//		playerTwoImg = new ImageView(new Image("/assets/gosnat.jpg"));
+//		playerTwoImg.setPreserveRatio(true);
+//
+//		playerOneImg.setFitHeight(buttonGrid.get(0).get(0).getHeight());
+//		playerTwoImg.setFitHeight(buttonGrid.get(0).get(0).getHeight());
 
 		// sets a nice neutral background color
 		this.setStyle("-fx-background-color: B6D6DD;");
@@ -180,7 +195,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 
 	public void fillGameBoard() {
 		// Sets a scalar to size the game nicely
-		int c = 12;
+		int c = 1;
 		if (model.getBoardSize() == 5) {
 			c = 30;
 		}else if (model.getBoardSize() == 7) {
@@ -281,19 +296,30 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 
 	// TODO
 	public void updateGameBoard() {
+		
 		// Loop through the gridPane, updating all elements
 		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
 			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
 				// TODO PLAYER CASE
 				if (buttonGrid.get(i).get(j).getType().equals("space")) {
 					if (model.getBoard().get(i/2).get(j/2).getPlayerSpace() != null) {
-						if(model.getBoard().get(i/2).get(j/2).getPlayerSpace().equals(model.getPlayerOne()))
-							buttonGrid.get(i).get(j).setStyle("-fx-background-color: #ffffff;");
-						//							buttonGrid.get(i).get(j).setStyle("-fx-background-image: url(insert link here);");
-						else
-							buttonGrid.get(i).get(j).setStyle("-fx-background-color: #000000;");
-						//							buttonGrid.get(i).get(j).setStyle("-fx-background-image: url(insert link here);");
+						if(model.getBoard().get(i/2).get(j/2).getPlayerSpace().equals(model.getPlayerOne())) {
+							Image playerOneImage = new Image("/assets/SUPREMELEADERNKBK.png");
+							ImageView temp = new ImageView(playerOneImage);
+							temp.setPreserveRatio(true);
+							temp.setFitHeight(buttonGrid.get(i).get(j).getHeight());
+							buttonGrid.get(i).get(j).setGraphic(temp);
+						}else {
+							
+							Image playerTwoImage = new Image("/assets/gosnat.jpg");
+							ImageView temp = new ImageView(playerTwoImage);
+							temp.setPreserveRatio(true);
+							temp.setFitHeight(buttonGrid.get(i).get(j).getHeight());
+							buttonGrid.get(i).get(j).setGraphic(temp);						
+						}
+
 					} else {
+						buttonGrid.get(i).get(j).setGraphic(null);
 						buttonGrid.get(i).get(j).setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 					}
 				}
