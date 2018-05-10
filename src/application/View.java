@@ -1,4 +1,10 @@
 package application;
+/**
+ * View for Quoridor
+ * @author Grant Gapinski
+ * @author Baiely Middendorf
+ * @version 5/10/18
+ */
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -9,8 +15,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -26,20 +30,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+// Constructor for View (and Controller) 
+public class View extends BorderPane implements Observer {
 
-// implements EventHandler<ActionEvent>,Observer
-public class View extends BorderPane implements EventHandler<ActionEvent>, Observer {
-
-	// the Model object variable
+	// the Model object variable which the view uses to tell the model where input occurred
 	private Model model;
 
-	// Instance variable for the button to reset the board
+	// Instance variable for the button to reset the gameBoard
 	private Button reset;
 
-	// Instance variable for the ComboBox used to change the size
+	// Instance variable for the ComboBox used to change the size of the game board
 	private ComboBox<Integer> sizeSelect;
 
-	// Instance variable for Label that displays player's turn and who won
+	// Instance variable for Label that displays player's turn and if a player won it displays who won
 	private Text feedback;
 
 	// Instance variable used to scale text
@@ -48,25 +51,13 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 	// Instance variable used to scale text
 	private ObjectProperty<Font> heightFontTracking = new SimpleObjectProperty<Font>(Font.getDefault());
 
-	// Instance variable that displays the playable board
+	// Instance variable that displays the playable board using a GridPane hodling SpaceButtons
 	private GridPane gameBoard;
 
+	// Instance variable that tracks where SpaceButtons are and what happens if they are clicked
 	private ArrayList<ArrayList<SpaceButton>> buttonGrid;
-	
-//	private ImageView playerOneImg;
-//	
-//	private ImageView playerTwoImg;
 
 	public View() {
-		
-//		playerOneImg = new ImageView(new Image("/assets/SUPREMELEADERNKBK.png"));
-//		playerOneImg.setPreserveRatio(true);
-//		
-//		playerTwoImg = new ImageView(new Image("/assets/gosnat.jpg"));
-//		playerTwoImg.setPreserveRatio(true);
-//
-//		playerOneImg.setFitHeight(buttonGrid.get(0).get(0).getHeight());
-//		playerTwoImg.setFitHeight(buttonGrid.get(0).get(0).getHeight());
 
 		// sets a nice neutral background color
 		this.setStyle("-fx-background-color: B6D6DD;");
@@ -87,12 +78,13 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		BorderPane topBP = new BorderPane();
 		topBP.setPadding(new Insets(0, 25, 0, 25));
 
+		// Adds a DropShaodow effect to the text
 		DropShadow ds = new DropShadow();
 		ds.setOffsetY(10.0f);
 		ds.setColor(Color.web("#183152"));
 
 
-		// Creates a nice title for the game
+		// Creates a nice title for the game which is displayed in upper left corner
 		Text title = new Text("Quoridor!");
 		title.setEffect(ds);
 		title.setCache(true);
@@ -102,7 +94,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		// Scales the title with the width of the page
 		title.fontProperty().bind(widthFontTracking);
 
-		// Creates a nice feedback area for the game
+		// Creates a nice feedback area for the game which is displayed in upper right corner
 		feedback = new Text(model.getFeedBack());
 		feedback.setFill(Color.web("#375D81"));
 		feedback.setEffect(ds);
@@ -112,7 +104,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		// Scales the feedback with the height of the page
 		feedback.fontProperty().bind(heightFontTracking);
 
-		// Creates a nice "Select a size: " area
+		// Creates a nice "Select a size: " area under feedback area
 		Text sizeText = new Text("Select a size: ");
 		sizeText.setFill(Color.web("#375D81"));
 		sizeText.setEffect(ds);
@@ -123,10 +115,11 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		// Scales the sizeLabel with the height of the page
 		sizeText.fontProperty().bind(heightFontTracking);
 
-		// Creates a button that resets the board to its original state
+		// Creates a button that resets the board to its original state under select a size
 		reset = new Button("Reset");
+		// Changes color of button
 		reset.setStyle("-fx-background-color: #C2C4C6;");
-		// Tells us that this class handles button presses
+		// Calls model.resetGame() to reset the board when clicked
 		reset.setOnAction((event) -> {
 			try {
 				model.resetGame();
@@ -141,9 +134,9 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		sizeSelect.setItems(FXCollections.observableArrayList(5, 7, 11));
 		// Sets the default size as 3 (in index 2) to display first
 		sizeSelect.getSelectionModel().select(0);		
-
+		// changes color of combobox
 		sizeSelect.setStyle("-fx-background-color: #C2C4C6;");
-		// Tells us that this class handles changes to the ComboBox
+		// updates the size of the board when changed
 		sizeSelect.setOnAction((event) -> {
 			try {
 				model.setBoardSize(sizeSelect.getSelectionModel().getSelectedItem());
@@ -161,6 +154,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		topRightGP.add(sizeSelect, 2, 1);
 		topRightGP.add(reset, 1, 2);
 
+		// Creates a VBox to hold title and possibly timer on upper left of borderpane
 		VBox leftVBox = new VBox();
 		leftVBox.getChildren().add(title);
 
@@ -193,8 +187,13 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 
 	}
 
+	/*
+	 * A method that creates the default viewable gameBoard for Quoridor
+	 */
 	public void fillGameBoard() {
-		// Sets a scalar to size the game nicely
+		// Sets a scalar to size the game to fit within the default window size
+		// and fullscreen.
+		// If size is 5 we have a scalar of 30, if 7 then scalar of 24, if 11 then 15
 		int c = 1;
 		if (model.getBoardSize() == 5) {
 			c = 30;
@@ -204,52 +203,68 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 			c = 15;
 		}
 
+		// Creates new GridPane and centers it
 		gameBoard = new GridPane();
 		gameBoard.setAlignment(Pos.CENTER);
 
-		// Make all Buttons
+		// Make all Buttons which will eventually either be a vertical fence,
+		// a horizontal fence, a fence post (which is invald) or a space where
+		// a player can reside.
 		buttonGrid = new ArrayList<ArrayList<SpaceButton>>();
 		for(int i = 0; i < model.getBoardSize()*2 - 1; i++) {
+			// Creates 2D ArrayList of SpaceButtons
 			buttonGrid.add(new ArrayList<SpaceButton>());
 			for(int j = 0; j < model.getBoardSize()*2 - 1; j++) {
-				// For fence-posts
+				// Creates fence-posts which have a default dark brown color and don't do anything/
+				// can't be interacted with.
 				if (i % 2 == 1 && j % 2 == 1) { 
-					//					 buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "fence-post"));
+					// TODO REMOVE TESTING
+					//buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "fence-post"));
 					buttonGrid.get(i).add(new SpaceButton("", "fence-post"));
 					buttonGrid.get(i).get(j).setMinSize(c * 1, c * 1);
 					buttonGrid.get(i).get(j).setMaxSize(c * 1, c * 1);
 					buttonGrid.get(i).get(j).setStyle("-fx-background-color: #533226;-fx-border-color: #533226;");
 				}
-				// for vert-fence (s)
+				// Creates vertical fence areas which are colored like all other buttons until
+				// clicked and then the updateGameBoard() method changes their color to brown and 
+				// sets them to placed using the model if valid
 				else if(j % 2 == 1){
-					//					buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "vert-fence"));
+					// TODO REMOVE TESTING
+					//buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "vert-fence"));
 					buttonGrid.get(i).add(new SpaceButton("", "vert-fence"));
 					buttonGrid.get(i).get(j).setMinSize(c * 1, c * 3);
 					buttonGrid.get(i).get(j).setMaxSize(c * 1, c * 3);
 					buttonGrid.get(i).get(j).setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 				}
-				// for horiz-fence (s)
+				// Creates horizontal fence areas which are colored like all other buttons until
+				// clicked and then the updateGameBoard() method changes their color to brown and
+				// sets them to placed using the model if valid
 				else if(i % 2 == 1){
-					//					buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "horiz-fence"));
+					// TODO REMOVE TESTING
+					//buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "horiz-fence"));
 					buttonGrid.get(i).add(new SpaceButton("", "horiz-fence"));
 					buttonGrid.get(i).get(j).setMinSize(c * 3, c * 1);
 					buttonGrid.get(i).get(j).setMaxSize(c * 3, c * 1);
 					buttonGrid.get(i).get(j).setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 				}
-				// for space (s)
+				// Creates spaces which players can move into, which are colored the default color until placed
+				// which then the assigned player image moves into that button
 				else {
-					//					buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "space"));
+					// TODO REMOVE TESTING
+					//buttonGrid.get(i).add(new SpaceButton(i + ", " + j, "space"));
 					buttonGrid.get(i).add(new SpaceButton("", "space"));
 					buttonGrid.get(i).get(j).setMinSize(c * 3, c * 3);
 					buttonGrid.get(i).get(j).setMaxSize(c * 3, c * 3);
 					buttonGrid.get(i).get(j).setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 				}
+				// Adds SpaceButtons to the gameBoard
 				gameBoard.add(buttonGrid.get(i).get(j), j, i);
 			}
 		}
 
-		// Add the gameboard to the GUI
-		// Sets the outside border color of the gameBoar
+		// Add the gameBoard to the GUI
+		// Sets the outside border color of the gameBoard
+		// and centers the gameBaord
 		gameBoard.setStyle("-fx-border-width: 20px; -fx-border-color: #72048F; -fx-alignment: center;");
 		gameBoard.setMaxSize(500, 500);
 		this.setCenter(gameBoard);
@@ -257,13 +272,20 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		// Adding handlers to each board piece
 		for(int i = 0; i < model.getBoardSize()*2 - 1; i++) {
 			for(int j = 0; j < model.getBoardSize()*2 - 1; j++) {
+				// Type determines if it is a vertical fence, horizontal fence, fence post, or playable space
 				String type = buttonGrid.get(i).get(j).getType();
 				SpaceButton sB = buttonGrid.get(i).get(j);
+				// Since we used a size*2 - 1 GridPane to stop enough buttons for fences and playable spaces
+				// we need to divide the row and column values by 2 to get points that can be used to interact
+				// with the model
 				int x = i/2;
 				int y = j/2;
 				if(type.equals("space")) {
+					// This is a playable space SpaceButton
 					sB.setOnAction((event) -> {
-						//						System.out.println("Playable area: " + sB.getRow() + ", " + sB.getColumn());
+						// TODO REMOVE TESTING 
+						//System.out.println("Playable area: " + sB.getRow() + ", " + sB.getColumn());
+						// Try to make a move, but if it is not possible display an error as to why it cannot be completed
 						try {
 							model.makeMove(x, y);
 						} catch(Exception e) {
@@ -271,8 +293,11 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 						}
 					});
 				} else if(type.equals("vert-fence")) {
+					// This is a vertical fence SpaceButton
 					sB.setOnAction((event) -> {
-						//						System.out.println("Vertical Fence: " + sB.getRow() + ", " + sB.getColumn());
+						// TODO REMOVE TESTING
+						//System.out.println("Vertical Fence: " + sB.getRow() + ", " + sB.getColumn());
+						// Try to place the vertical fence, but if it is not possible display an error as to why it cannot be completed
 						try {
 							model.placeFence(x, y, "right");
 						} catch (Exception e) {
@@ -280,8 +305,11 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 						}
 					});
 				} else if(type.equals("horiz-fence")) {
+					// This is a horizontal fence SpaceButton
 					sB.setOnAction((event) -> {
-						//						System.out.println("Horizontal Fence: " + sB.getRow() + ", " + sB.getColumn());
+						// TODO REMOVE TESTING
+						//System.out.println("Horizontal Fence: " + sB.getRow() + ", " + sB.getColumn());
+						// Try to place the horizontal fence, but if it is not possible display an error as to why it cannot be completed
 						try {
 							model.placeFence(x, y, "bottom");
 						} catch (Exception e) {
@@ -291,18 +319,21 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 				}
 			}	
 		}
+		// Calls updatGameBoard() method to place the players in their default starting positions
 		this.updateGameBoard();
 	}
 
-	// TODO
+	/**
+	 * Method that updates the gameBoard whenever a valid fence is played, or a player makes a valid move
+	 */
 	public void updateGameBoard() {
-		
-		// Loop through the gridPane, updating all elements
+		// Loop through the GridPane, updating all elements
 		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
 			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
-				// TODO PLAYER CASE
 				if (buttonGrid.get(i).get(j).getType().equals("space")) {
 					if (model.getBoard().get(i/2).get(j/2).getPlayerSpace() != null) {
+						// If a player doesn't exist in this space, then...
+						// scalar is used to scale the player images to the correct sizes depending on size of the board
 						int scalar = 1;
 						if (model.getBoardSize() == 5) {
 							scalar = 90;
@@ -312,27 +343,31 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 							scalar = 45;
 						}
 						if(model.getBoard().get(i/2).get(j/2).getPlayerSpace().equals(model.getPlayerOne())) {
+							// If the player is player one then set the corresponding SpaceButton to the image below
 							Image playerOneImage = new Image("/assets/SUPREMELEADERNKBK.png", scalar, scalar, true, true);
 							ImageView temp = new ImageView(playerOneImage);
 							buttonGrid.get(i).get(j).setGraphic(temp);
 						}else {
-							
+							// Else the player is player two so set the corresponding SpaceButton to the image below
 							Image playerTwoImage = new Image("/assets/gosnat.jpg", scalar, scalar, true, true);
 							ImageView temp = new ImageView(playerTwoImage);
 							buttonGrid.get(i).get(j).setGraphic(temp);						
 						}
-
 					} else {
+						// Changes the SpaceButtons where a player use to be to the default coloring
 						buttonGrid.get(i).get(j).setGraphic(null);
 						buttonGrid.get(i).get(j).setStyle("-fx-background-color: Transparent;-fx-border-color: #8F1D04;");
 					}
 				}
-
+				// If the SpaceButton in buttonGrid is a horizontal fence then set the fence below of the space to placed
+				// and set the color of that fence to brown signifying a placed fence.
 				if (buttonGrid.get(i).get(j).getType().equals("horiz-fence")) {
 					if(model.getBoard().get(i/2).get(j/2).getBottom().getPlaced()) {
 						buttonGrid.get(i).get(j).setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
 					}
 				}
+				// If the SpaceButton in the buttonGrid is a vertical fence then set the fence to the right of the space to placed
+				// and set the color of that fence to brown signifying a placed fence.
 				if(buttonGrid.get(i).get(j).getType().equals("vert-fence")) {
 					if(model.getBoard().get(i/2).get(j/2).getRight().getPlaced()) {
 						buttonGrid.get(i).get(j).setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
@@ -342,6 +377,10 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		}
 	}
 
+	/**
+	 * Alert method used to display Alerts when an error is thrown
+	 * @param e
+	 */
 	public void alertMethod(Exception e) {
 		Alert alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Game Error");
@@ -349,6 +388,11 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 		alert.showAndWait();
 	}
 
+	/** 
+	 * update method that updates the board and the feedback area
+	 * either when the size is set/reset is clicked or when a valid 
+	 * fence is placed or a valid move is made
+	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if (arg1.equals("reset")) {
@@ -359,11 +403,5 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 			this.feedback.setText(model.getFeedBack());
 		}
 	}
-
-	@Override
-	public void handle(ActionEvent event) {
-
-	}
-
 
 }
