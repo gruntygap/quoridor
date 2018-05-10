@@ -1,5 +1,10 @@
 package application;
-
+/**
+ * Main Model Class
+ * @author Grant Gapinski
+ * @author Bailey Middendorf
+ * @version 05/10/18
+ */
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -9,18 +14,30 @@ import java.util.Observable;
 
 public class Model extends Observable {
 
+	/** Size of the board */
 	private int boardSize;
 	
+	/** A 2D array of Space(s) which represents the 'board' */
 	private ArrayList<ArrayList<Space>> board;
 	
+	/** Player One of the game */
 	private Player playerOne;
 	
+	/** Player Two of the game */
 	private Player playerTwo;
 	
+	/** A number representing whose turn it is */
 	private int turn;
 	
+	/** A boolean that stores if the game is over */
 	private boolean gameOver;
 	
+	/**
+	 * The general constructor for the Model
+	 * @param size - The n value that is for the n * n board
+	 * ^ must be an odd number greater than 1
+	 * @throws Exception - If the board size is invalid, do not create
+	 */
 	public Model(int size) throws Exception {
 		try {
 		// Sets the board size and creates board and players
@@ -30,6 +47,10 @@ public class Model extends Observable {
 		}
 	}
 	
+	/**
+	 * Creates the board, and fences (from the method call at the bottom).
+	 * @param size - Creates the board with a size of size.
+	 */
 	private void createBoard(int size) {
 		// Initializes the 2D arrayList
 		this.board = new ArrayList<ArrayList<Space>>();
@@ -63,6 +84,10 @@ public class Model extends Observable {
 		addDefaultFences();
 	}
 	
+	/**
+	 * Adds the fences onto the board.
+	 * Adds placed outer fences as well as unplaced inner fences.
+	 */
 	private void addDefaultFences() {
 		// Creates the outer ring of placed fences
 		// These fences are shared with no other spaces
@@ -106,34 +131,59 @@ public class Model extends Observable {
 		}
 	}
 	
+	/**
+	 *  Creates the players
+	 *  Also used to reset the players
+	 */
 	private void createPlayers() {
 		// Initialize/Reset Players
 		this.playerOne = new Player("Player 1");
 		this.playerTwo = new Player("Player 2");
 	}
 
+	/**
+	 * Gets the board size
+	 * @return boardSize - which is the n in the n * n board.
+	 */
 	public int getBoardSize() {
 		return boardSize;
 	}
 
+	/**
+	 * Sets the board Size, as well as creating everything.
+	 * @param size - The size to set the board to.
+	 * @throws Exception - If the size is not odd and greater than one.
+	 */
 	public void setBoardSize(int size) throws Exception {
 		if(size > 1 && size % 2 != 0) {
+			// Creates/Resets players
 			createPlayers();
+			// Sets the size variable with the size
 			this.boardSize = size;
+			// Creates the board and fences
 			createBoard(size);
+			// Sets the initial turn
 			this.turn = 1;
+			// sets observers as changed.
 			this.setChanged();
-			// TODO MAYBE INPUT DATA INTO THIS METHOD
+			// Notifies the Observers
 			this.notifyObservers("reset");
 		} else {
 			throw new Exception("Size is an invalid number!");
 		}
 	}
 	
+	/**
+	 * Get the board for the controller.
+	 * @return - return the ArrayList<ArrayList<Space>>
+	 */
 	public ArrayList<ArrayList<Space>> getBoard(){
 		return board;
 	}
 	
+	/**
+	 * Change the turn from 1 to 2 and 2 to 1
+	 */
 	private void changeTurn() {
 		if(turn == 1) {
 			turn = 2;
@@ -142,6 +192,10 @@ public class Model extends Observable {
 		}
 	}
 	
+	/**
+	 * Gets feedback for the current game
+	 * @return - A string that tells the status of the game
+	 */
 	public String getFeedBack() {
 		if(isGameOver()) {
 			return "Player " + turn + " Won!";
@@ -156,6 +210,14 @@ public class Model extends Observable {
 		}
 	}
 	
+	/**
+	 * Makes a move for the current player
+	 * @param x - The x coordinate to move to 
+	 * @param y - The y coordinate to move to
+	 * @throws Exception -
+	 * 	If the game is over
+	 * 	If the space is invalid
+	 */
 	public void makeMove(int x, int y) throws Exception {
 		if(this.gameOver) {
 			throw new Exception("Game is Over");
@@ -182,10 +244,16 @@ public class Model extends Observable {
 			changeTurn();
 		}
 		this.setChanged();
-		// TODO MAYBE INPUT DATA INTO THIS METHOD
 		this.notifyObservers("updateBoard");
 	}
 	
+	/**
+	 * If the move is valid for the current player
+	 * @param currentPlayer - The player that is currently making a turn
+	 * @param x - The x move in question
+	 * @param y - The y move in question
+	 * @return - a boolean stating if the move is valid or not.
+	 */
 	private boolean validPlayerMove(Player currentPlayer, int x, int y) {
 		boolean valid = false;
 		// Get location of the currentPlayer
@@ -238,6 +306,14 @@ public class Model extends Observable {
 		return valid;
 	}
 	
+	/**
+	 * Places a fence move
+	 * @param x - The x coord for the space that holds the fence
+	 * @param y - The y coord for the space that holds the fence
+	 * @param key - A string that says what fence one is trying to place
+	 * ^ key can be == "top" || "bottom" || "right" || "left"
+	 * @throws Exception - If the fence key is given and invalid
+	 */
 	public void placeFence(int x, int y, String key) throws Exception {
 		if(this.gameOver) {
 			throw new Exception("Game is Over");
@@ -271,11 +347,14 @@ public class Model extends Observable {
 		// If the player sets a valid fence, then change the turn 
 		changeTurn();
 		this.setChanged();
-		// TODO MAYBE INPUT DATA INTO THIS METHOD
 		this.notifyObservers("updateBoard");
 	}
 	
-	// If a valid move from player
+	/**
+	 * If there is a path from player to playerGoal
+	 * @param player - The player in question
+	 * @return - boolean that says if the fence placement is valid
+	 */
 	private boolean validFencePlacement(Player player) {
 		// By default the fence placement is not valid
 		boolean valid = false;
@@ -342,6 +421,10 @@ public class Model extends Observable {
 		return valid;
 	}
 	
+	/**
+	 * Tests if the game is over
+	 * @return - if the game is over boolean
+	 */
 	private boolean isGameOver() {
 		Set<Space> playerOneGoal = new HashSet<Space>();
 		Set<Space> playerTwoGoal = new HashSet<Space>();
@@ -358,20 +441,35 @@ public class Model extends Observable {
 		return false;
 	}
 	
+	/**
+	 * Gets the firstPlayer
+	 * @return - Player which is playerOne
+	 */
 	public Player getPlayerOne() {
 		return playerOne;
 	}
 	
+	/**
+	 * Gets the secondPlayer
+	 * @return - Player which is playerTwo
+	 */
 	public Player getPlayerTwo() {
 		return playerTwo;
 	}
 	
+	/**
+	 * Resets the game
+	 * @throws Exception - If the board size is invalid (SHOULD NEVER HAPPEN)
+	 */
 	public void resetGame() throws Exception {
 		this.turn = 1;
 		this.gameOver = false;
 		this.setBoardSize(this.boardSize);
 	}
 	
+	/**
+	 * A toString method for testing the model w/o the gui
+	 */
 	public String toString() {
 		String s = "";
 		for(int i = 0; i < boardSize; i++) {

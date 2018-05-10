@@ -1,4 +1,10 @@
 package application;
+/**
+ * Fence Model Class
+ * @author Grant Gapinski
+ * @author Bailey Middendorf
+ * @version 05/10/18
+ */
 
 public class Fence {
 	
@@ -25,10 +31,18 @@ public class Fence {
 		this.placed = alreadyPlaced;
 	}
 	
+	/**
+	 * Gets the placed value
+	 * @return - the bool signifying if the fence is placed
+	 */
 	public boolean getPlaced() {
 		return placed;
 	}
 	
+	/**
+	 * A method to place the fence
+	 * @throws Exception - if the fence is already placed
+	 */
 	public void placeFence() throws Exception {
 		if(this.placed) {
 			throw new Exception("This fence has already been placed!");
@@ -37,10 +51,16 @@ public class Fence {
 		}
 	}
 	
+	/**
+	 * For the model, if the fence is invalid, then remove it
+	 */
 	public void removeFence() {
 		this.placed = false;
 	}
 	
+	/**
+	 * toString method for testing model
+	 */
 	public String toString() {
 		String s = "";
 		if(this.placed) {

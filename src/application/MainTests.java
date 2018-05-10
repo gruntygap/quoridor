@@ -1,4 +1,10 @@
 package application;
+/**
+ * Test Cases
+ * @author Grant Gapinski
+ * @author Bailey Middendorf
+ * @version 05/10/18
+ */
 
 import static org.junit.jupiter.api.Assertions.*;
 

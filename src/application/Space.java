@@ -1,4 +1,10 @@
 package application;
+/**
+ * Space Model Class
+ * @author Grant Gapinski
+ * @author Bailey Middendorf
+ * @version 05/10/18
+ */
 
 /**
  * A Class that defines what a Space does/holds
