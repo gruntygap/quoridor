@@ -250,7 +250,7 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 
 		// Add the gameboard to the GUI
 		// Sets the outside border color of the gameBoar
-		gameBoard.setStyle("-fx-border-width: 3px; -fx-border-color: #72048F; -fx-alignment: center;");
+		gameBoard.setStyle("-fx-border-width: 20px; -fx-border-color: #72048F; -fx-alignment: center;");
 		gameBoard.setMaxSize(500, 500);
 		this.setCenter(gameBoard);
 
