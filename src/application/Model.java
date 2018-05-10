@@ -19,7 +19,7 @@ public class Model extends Observable {
 	
 	private int turn;
 	
-	//private boolean gameOver;
+	private boolean gameOver;
 	
 	public Model(int size) throws Exception {
 		try {
@@ -157,6 +157,9 @@ public class Model extends Observable {
 	}
 	
 	public void makeMove(int x, int y) throws Exception {
+		if(this.gameOver) {
+			throw new Exception("Game is Over");
+		}
 		Player pointer = null;
 		if(this.turn == 1) {
 			pointer = playerOne;
@@ -236,6 +239,9 @@ public class Model extends Observable {
 	}
 	
 	public void placeFence(int x, int y, String key) throws Exception {
+		if(this.gameOver) {
+			throw new Exception("Game is Over");
+		}
 		// Temporary fence;
 		Fence temp = null;
 		if(key.equals("top")) {
@@ -346,6 +352,7 @@ public class Model extends Observable {
 		
 		if(playerOneGoal.contains(this.board.get(this.getPlayerOne().getPosition()[0]).get(this.getPlayerOne().getPosition()[1])) ||
 				playerTwoGoal.contains(this.board.get(this.getPlayerTwo().getPosition()[0]).get(this.getPlayerTwo().getPosition()[1]))) {
+			this.gameOver = true;
 			return true;
 		}
 		return false;
@@ -361,6 +368,7 @@ public class Model extends Observable {
 	
 	public void resetGame() throws Exception {
 		this.turn = 1;
+		this.gameOver = false;
 		this.setBoardSize(this.boardSize);
 	}
 	
