@@ -303,18 +303,22 @@ public class View extends BorderPane implements EventHandler<ActionEvent>, Obser
 				// TODO PLAYER CASE
 				if (buttonGrid.get(i).get(j).getType().equals("space")) {
 					if (model.getBoard().get(i/2).get(j/2).getPlayerSpace() != null) {
+						int scalar = 1;
+						if (model.getBoardSize() == 5) {
+							scalar = 90;
+						}else if (model.getBoardSize() == 7) {
+							scalar = 72;
+						}else {
+							scalar = 45;
+						}
 						if(model.getBoard().get(i/2).get(j/2).getPlayerSpace().equals(model.getPlayerOne())) {
-							Image playerOneImage = new Image("/assets/SUPREMELEADERNKBK.png");
+							Image playerOneImage = new Image("/assets/SUPREMELEADERNKBK.png", scalar, scalar, true, true);
 							ImageView temp = new ImageView(playerOneImage);
-							temp.setPreserveRatio(true);
-							temp.setFitHeight(buttonGrid.get(i).get(j).getHeight());
 							buttonGrid.get(i).get(j).setGraphic(temp);
 						}else {
 							
-							Image playerTwoImage = new Image("/assets/gosnat.jpg");
+							Image playerTwoImage = new Image("/assets/gosnat.jpg", scalar, scalar, true, true);
 							ImageView temp = new ImageView(playerTwoImage);
-							temp.setPreserveRatio(true);
-							temp.setFitHeight(buttonGrid.get(i).get(j).getHeight());
 							buttonGrid.get(i).get(j).setGraphic(temp);						
 						}
 
