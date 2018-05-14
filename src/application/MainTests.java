@@ -6,48 +6,17 @@ package application;
  * @version 05/10/18
  */
 
+// UPDATE: This file used to have 5 tests in it
+// However, to protect access to getBoard method, many of them became useless.
+// Their purpose had been served.
+// RIP 3 tests.
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
 class MainTests {
-	
-	@Test
-	void verifyPointers() {
-		Model model = null;
-		try {
-			model = new Model(5);
-		} catch(Exception e) {
-			System.out.println(e.getMessage());
-		}
-		
-//		System.out.println(model);
-		
-		assertTrue(model.getBoard().get(0).get(0).getRight().equals(model.getBoard().get(0).get(1).getLeft()));
-		assertTrue(model.getBoard().get(0).get(0).getBottom().equals(model.getBoard().get(1).get(0).getTop()));
-	}
-	
-	@Test
-	void verifyPointerConnection() {
-//		System.out.println("=============================================================================================================================================================");
-//		System.out.println("");
-		Model model = null;
-		try {
-			model = new Model(5);
-		} catch(Exception e) {
-			System.out.println(e.getMessage());
-		}
-//		System.out.println(model);
-		
-//		System.out.println(model.getBoard().get(0).get(0).getRight().getPlaced() + " -> " + model.getBoard().get(0).get(1).getLeft().getPlaced());
-		try {
-			model.getBoard().get(0).get(0).getRight().placeFence();
-		} catch(Exception e) {
-			System.out.println("" + e.getMessage());
-		}
-//		System.out.println(model.getBoard().get(0).get(0).getRight().getPlaced() + " -> " + model.getBoard().get(0).get(1).getLeft().getPlaced());
-	}
-	
+
 	@Test
 	void verifyPlayerLocation() {
 //		System.out.println("=============================================================================================================================================================");
@@ -59,7 +28,7 @@ class MainTests {
 			System.out.println(e.getMessage());
 		}
 		
-		assertTrue(model.getBoard().get(0).get(2).getPlayerSpace().equals(model.getPlayerOne()));
+		assertTrue(model.getPlayerForSpace(0, 2).equals(model.getPlayerOne()));
 		
 	}
 	

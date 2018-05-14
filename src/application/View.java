@@ -2,10 +2,9 @@ package application;
 /**
  * View for Quoridor
  * @author Grant Gapinski
- * @author Baiely Middendorf
- * @version 5/10/18
+ * @author Bailey Middendorf
+ * @version 5/14/18
  */
-
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -57,8 +56,10 @@ public class View extends BorderPane implements Observer {
 	// Instance variable that tracks where SpaceButtons are and what happens if they are clicked
 	private ArrayList<ArrayList<SpaceButton>> buttonGrid;
 
+	/**
+	 * General Contructor for the view
+	 */
 	public View() {
-
 		// sets a nice neutral background color
 		this.setStyle("-fx-background-color: B6D6DD;");
 
@@ -184,7 +185,6 @@ public class View extends BorderPane implements Observer {
 				widthFontTracking.set(Font.font(newWidth.doubleValue() / 20));
 			}
 		});
-
 	}
 
 	/*
@@ -324,7 +324,7 @@ public class View extends BorderPane implements Observer {
 		for (int i = 0; i < model.getBoardSize()*2 - 1; i ++) {
 			for (int j = 0; j < model.getBoardSize()*2 - 1; j ++) {
 				if (buttonGrid.get(i).get(j).getType().equals("space")) {
-					if (model.getBoard().get(i/2).get(j/2).getPlayerSpace() != null) {
+					if (model.getPlayerForSpace(i/2, j/2) != null) {
 						// If a player doesn't exist in this space, then...
 						// scalar is used to scale the player images to the correct sizes depending on size of the board
 						int scalar = 1;
@@ -335,7 +335,7 @@ public class View extends BorderPane implements Observer {
 						}else {
 							scalar = 45;
 						}
-						if(model.getBoard().get(i/2).get(j/2).getPlayerSpace().equals(model.getPlayerOne())) {
+						if(model.getPlayerForSpace(i/2, j/2).equals(model.getPlayerOne())) {
 							// If the player is player one then set the corresponding SpaceButton to the image below
 							Image playerOneImage = new Image("/assets/SUPREMELEADERNKBK.png", scalar, scalar, true, true);
 							ImageView temp = new ImageView(playerOneImage);
@@ -355,15 +355,23 @@ public class View extends BorderPane implements Observer {
 				// If the SpaceButton in buttonGrid is a horizontal fence then set the fence below of the space to placed
 				// and set the color of that fence to brown signifying a placed fence.
 				if (buttonGrid.get(i).get(j).getType().equals("horiz-fence")) {
-					if(model.getBoard().get(i/2).get(j/2).getBottom().getPlaced()) {
-						buttonGrid.get(i).get(j).setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+					try {
+						if(model.getPlacedForFence(i/2, j/2, "bottom")) {
+							buttonGrid.get(i).get(j).setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+						}
+					} catch (Exception e) {
+						alertMethod(e);
 					}
 				}
 				// If the SpaceButton in the buttonGrid is a vertical fence then set the fence to the right of the space to placed
 				// and set the color of that fence to brown signifying a placed fence.
 				if(buttonGrid.get(i).get(j).getType().equals("vert-fence")) {
-					if(model.getBoard().get(i/2).get(j/2).getRight().getPlaced()) {
-						buttonGrid.get(i).get(j).setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+					try {
+						if(model.getPlacedForFence(i/2, j/2, "right")) {
+							buttonGrid.get(i).get(j).setStyle("-fx-background-color: #784122;-fx-border-color: #533226;");
+						}
+					} catch (Exception e) {
+						alertMethod(e);
 					}
 				}
 			}

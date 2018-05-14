@@ -29,7 +29,7 @@ public class Space {
 	// Instance variable that creates the player in this Space
 	private Player playerSpace;
 	
-	// Keeps track of the position of this Space
+	// Keeps track of the position of this Space in a 2 spaced array
 	private int[] position;
 	
 	/*

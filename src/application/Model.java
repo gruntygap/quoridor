@@ -3,7 +3,7 @@ package application;
  * Main Model Class
  * @author Grant Gapinski
  * @author Bailey Middendorf
- * @version 05/10/18
+ * @version 05/14/18
  */
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -174,10 +174,10 @@ public class Model extends Observable {
 	}
 	
 	/**
-	 * Get the board for the controller.
+	 * Gets the board
 	 * @return - return the ArrayList<ArrayList<Space>>
 	 */
-	public ArrayList<ArrayList<Space>> getBoard(){
+	private ArrayList<ArrayList<Space>> getBoard(){
 		return board;
 	}
 	
@@ -272,26 +272,39 @@ public class Model extends Observable {
 		}
 		// Create an arrayList of spaces which are valid for current player to move to.
 		ArrayList<Space> validSpaces = new ArrayList<Space>();
+		
+		// Tests if the space of the player doesnt have a top placed fence
 		if(!this.board.get(playerX).get(playerY).getTop().getPlaced())
 			validSpaces.add(this.board.get(playerX - 1).get(playerY));
+		
+		// Tests if the space of the player doesnt have a bottom placed fence
 		if(!this.board.get(playerX).get(playerY).getBottom().getPlaced())
 			validSpaces.add(this.board.get(playerX + 1).get(playerY));
+		
+		// Tests if the space of the player doesnt have a left placed fence
 		if(!this.board.get(playerX).get(playerY).getLeft().getPlaced())
 			validSpaces.add(this.board.get(playerX).get(playerY - 1));
+		
+		// Tests if the space of the player doesnt have a right placed fence
 		if(!this.board.get(playerX).get(playerY).getRight().getPlaced())
 			validSpaces.add(this.board.get(playerX).get(playerY + 1));
 		
+		// If any of the valid spaces contain the space of the other player
 		if(validSpaces.contains(this.board.get(otherPlayerX).get(otherPlayerY))) {
 			// Cannot move to the other player, as the other player lives there
 			// Remove that space from valid Spaces.
 			validSpaces.remove(this.board.get(otherPlayerX).get(otherPlayerY));
+			
 			// The Spaces that may be valid
 			if(!this.board.get(otherPlayerX).get(otherPlayerY).getTop().getPlaced())
 				validSpaces.add(this.board.get(otherPlayerX - 1).get(otherPlayerY));
+			
 			if(!this.board.get(otherPlayerX).get(otherPlayerY).getBottom().getPlaced())
 				validSpaces.add(this.board.get(otherPlayerX + 1).get(otherPlayerY));
+			
 			if(!this.board.get(otherPlayerX).get(otherPlayerY).getLeft().getPlaced())
 				validSpaces.add(this.board.get(otherPlayerX).get(otherPlayerY - 1));
+			
 			if(!this.board.get(otherPlayerX).get(otherPlayerY).getRight().getPlaced())
 				validSpaces.add(this.board.get(otherPlayerX).get(otherPlayerY + 1));
 			
@@ -320,6 +333,7 @@ public class Model extends Observable {
 		}
 		// Temporary fence;
 		Fence temp = null;
+		// Gets the temp fence based on they key word
 		if(key.equals("top")) {
 			temp = this.board.get(x).get(y).getTop();
 		} else if(key.equals("bottom")) {
@@ -468,7 +482,39 @@ public class Model extends Observable {
 	}
 	
 	/**
-	 * A toString method for testing the model w/o the gui
+	 * Gets the player within the space (x, y)
+	 * @param x the X coordinate of the space
+	 * @param y the Y coordinate of the space
+	 * @return The player that is in the playerSpace of the Space.
+	 */
+	public Player getPlayerForSpace(int x, int y) {
+		return getBoard().get(x).get(y).getPlayerSpace();
+	}
+	
+	/**
+	 * Gets the placed boolean value for the listed fence based on key
+	 * @param x - The X coord of the space that have the fence
+	 * @param y - The Y coord of the space that have the fence
+	 * @param key - The key for the fence, must be "top" || "bottom" ||
+	 * "left" || "right"
+	 * @return - The boolean value of if that fence is placed or not
+	 * @throws Exception - if there is no "key" fence, throw exception
+	 */
+	public boolean getPlacedForFence(int x, int y, String key) throws Exception {
+		if(key.equals("top")) {
+			return this.board.get(x).get(y).getTop().getPlaced();
+		} else if(key.equals("bottom")) {
+			return this.board.get(x).get(y).getBottom().getPlaced();
+		} else if(key.equals("left")) {
+			return this.board.get(x).get(y).getLeft().getPlaced();
+		} else if(key.equals("right")) {
+			return this.board.get(x).get(y).getRight().getPlaced();
+		} else {
+			throw new Exception("There are no fences called: " + key);
+		}
+	}
+	/**
+	 * A toString method for testing the model w/o the GUI
 	 */
 	public String toString() {
 		String s = "";
